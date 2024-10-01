@@ -1,0 +1,5 @@
+alembic init -t async migration
+alembic revision --autogenerate -m "Update tables"
+alembic upgrade heads
+
+# Потом разберусь поподробнее
