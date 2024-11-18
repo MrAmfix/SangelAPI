@@ -107,3 +107,17 @@ class VisibilityTypeUpdate(VisibilityTypeCreate):
 
 class VisibilityTypeGet(VisibilityTypeUpdate):
     pass
+
+
+class TokenCreate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    refresh_token: str
+    user_id: uuid.UUID
+
+
+class TokenUpdate(TokenCreate):
+    id: uuid.UUID
+
+
+class TokenGet(TokenUpdate):
+    pass

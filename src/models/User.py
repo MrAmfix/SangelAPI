@@ -3,6 +3,7 @@ from src.models.DeviceProduct import DeviceProduct
 from src.models.FavouriteList import FavouriteList
 from src.models.Notification import Notification
 from src.models.Photo import Photo
+from src.models.Token import Token
 from src.models.UserStatus import UserStatus
 from src.models.VisibilityType import VisibilityType
 
@@ -22,6 +23,7 @@ class User(Base, AsyncAttrs):
 
     device_products: Mapped[List["DeviceProduct"]] = relationship(back_populates='user', lazy='selectin')
     notifications: Mapped[List["Notification"]] = relationship(back_populates='user', lazy='selectin')
+    tokens: Mapped[List["Token"]] = relationship(back_populates='user', lazy='selectin')
 
     photo_id: Mapped[UUID] = mapped_column(ForeignKey('photos.id'))
     photo: Mapped["Photo"] = relationship(back_populates='user', lazy='selectin')
