@@ -1,7 +1,10 @@
 .idea
 venv
 venv/
+sangel_venv/
+/sangel_venv/
 /venv/
 .idea/
 /.idea/
 .env
+__pycache__

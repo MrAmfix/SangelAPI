@@ -4,10 +4,16 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.ext.declarative import declarative_base
 from src.settings import DATABASE_URL
 
-load_dotenv()
+# load_dotenv()
+
 engine = create_async_engine(DATABASE_URL, future=True)
-SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, autocommit=False,
-                                  autoflush=False, class_=AsyncSession)
+SessionLocal = async_sessionmaker(
+    bind=engine,
+    expire_on_commit=False,
+    autocommit=False,
+    autoflush=False,
+    class_=AsyncSession,
+)
 Base = declarative_base()
 
 
