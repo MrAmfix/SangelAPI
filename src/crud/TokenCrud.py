@@ -1,14 +1,14 @@
 from src.crud.base.factory import BaseCrudFactory
-from src.models.models import Token
-from src.schemas.system_schemas import TokenGet, TokenUpdate, TokenCreate
+from src.models import Token
+from src.schemas import TokenModels
 
 
 class TokenCrud(
     BaseCrudFactory(
         model=Token,
-        update_schema=TokenUpdate,
-        create_schema=TokenCreate,
-        get_schema=TokenGet
+        update_schema=TokenModels.Update,
+        create_schema=TokenModels.Create,
+        get_schema=TokenModels.Get
     )
 ):
     pass
