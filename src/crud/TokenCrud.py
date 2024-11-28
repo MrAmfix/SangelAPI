@@ -1,5 +1,5 @@
 from src.crud.base.factory import BaseCrudFactory
-from src.models.Token import Token
+from src.models.models import Token
 from src.schemas.system_schemas import TokenGet, TokenUpdate, TokenCreate
 
 

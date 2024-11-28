@@ -1,5 +1,5 @@
 from src.crud.base.factory import BaseCrudFactory
-from src.models.User import User
+from src.models.models import User
 from src.schemas.system_schemas import UserUpdate, UserCreate, UserGet
 
 

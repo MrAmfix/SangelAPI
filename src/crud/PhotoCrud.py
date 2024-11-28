@@ -1,5 +1,5 @@
 from src.crud.base.factory import BaseCrudFactory
-from src.models.Photo import Photo
+from src.models.models import Photo
 from src.schemas.system_schemas import PhotoUpdate, PhotoCreate, PhotoGet
 
 

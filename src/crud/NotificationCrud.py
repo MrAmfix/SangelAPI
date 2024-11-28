@@ -1,5 +1,5 @@
 from src.crud.base.factory import BaseCrudFactory
-from src.models.Notification import Notification
+from src.models.models import Notification
 from src.schemas.system_schemas import NotificationUpdate, NotificationCreate, NotificationGet
 
 

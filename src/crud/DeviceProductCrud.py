@@ -1,5 +1,5 @@
 from src.crud.base.factory import BaseCrudFactory
-from src.models.DeviceProduct import DeviceProduct
+from src.models.models import DeviceProduct
 from src.schemas.system_schemas import DeviceProductUpdate, DeviceProductCreate, DeviceProductGet
 
 

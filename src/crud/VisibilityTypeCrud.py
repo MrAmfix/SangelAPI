@@ -1,5 +1,5 @@
 from src.crud.base.factory import BaseCrudFactory
-from src.models.VisibilityType import VisibilityType
+from src.models.models import VisibilityType
 from src.schemas.system_schemas import VisibilityTypeUpdate, VisibilityTypeCreate, VisibilityTypeGet
 
 

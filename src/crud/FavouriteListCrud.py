@@ -1,5 +1,5 @@
 from src.crud.base.factory import BaseCrudFactory
-from src.models.FavouriteList import FavouriteList
+from src.models.models import FavouriteList
 from src.schemas.system_schemas import FavouriteListUpdate, FavouriteListCreate, FavouriteListGet
 
 
