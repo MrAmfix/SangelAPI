@@ -102,7 +102,7 @@ class _VerificationCodeCreate(BaseModel):
 
 
 class _VerificationCodeUpdate(_VerificationCodeCreate):
-    pass
+    id: UUID4
 
 
 class _VerificationCodeGet(_VerificationCodeUpdate):
