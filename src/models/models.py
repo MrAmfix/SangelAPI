@@ -43,7 +43,7 @@ class User(Base, AsyncAttrs):
 
     visibility_type_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey('visibility_type.id'),
+        ForeignKey('visibility_types.id'),
         nullable=False
     )
     visibility_type: Mapped["VisibilityType"] = relationship(

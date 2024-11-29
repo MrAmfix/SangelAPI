@@ -1,17 +1,26 @@
 import os
 import io
-from fastapi import File, UploadFile, HTTPException, status
+from fastapi import Depends, File, UploadFile, HTTPException, status
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi import APIRouter
 from PIL import Image, UnidentifiedImageError
 from settings import MAX_FILE_SIZE, UPLOAD_FOLDER
 from utils.image import image_name_rename
+from crud import UserCrud
+from database import get_session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 
 
 router = APIRouter(prefix="/api")
 
+@router.post("/check")
+async def check(session: AsyncSession = Depends(get_session)):
+
+    result = await UserCrud.get_all(session=session)
+    print(result)
+    return result
 
 @router.post("/client/upload_photo", summary="Загрузка фотографии")
 async def uploag_image(

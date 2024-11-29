@@ -4,6 +4,7 @@ from src.schemas import UserModels
 
 
 class UserCrud(
+    
     BaseCrudFactory(
         model=User,
         update_schema=UserModels.Update,
