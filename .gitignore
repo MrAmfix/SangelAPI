@@ -7,4 +7,5 @@ sangel_venv/
 .idea/
 /.idea/
 .env
+test.py
 __pycache__

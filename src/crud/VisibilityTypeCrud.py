@@ -1,14 +1,14 @@
 from src.crud.base.factory import BaseCrudFactory
-from src.models.VisibilityType import VisibilityType
-from src.schemas.system_schemas import VisibilityTypeUpdate, VisibilityTypeCreate, VisibilityTypeGet
+from src.models import VisibilityType
+from src.schemas import VisibilityTypeModels
 
 
 class VisibilityTypeCrud(
     BaseCrudFactory(
         model=VisibilityType,
-        update_schema=VisibilityTypeUpdate,
-        create_schema=VisibilityTypeCreate,
-        get_schema=VisibilityTypeGet
+        update_schema=VisibilityTypeModels.Update,
+        create_schema=VisibilityTypeModels.Create,
+        get_schema=VisibilityTypeModels.Get
     )
 ):
     pass
