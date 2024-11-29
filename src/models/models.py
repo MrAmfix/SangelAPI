@@ -122,6 +122,8 @@ class VerificationCode(Base, AsyncAttrs):
         CheckConstraint("phone ~ '^\\+7\\d{10}$' OR phone ~ '^8\\d{10}$'", name="check_verif_code_phone_format")
     )
 
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
+                                          default=uuid.uuid4)
     code: Mapped[str] = mapped_column(String(6), nullable=False)
     phone: Mapped[str] = mapped_column(String(15), nullable=False)
 
