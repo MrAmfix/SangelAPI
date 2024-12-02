@@ -36,6 +36,7 @@ class User(Base, AsyncAttrs):
     )
     photo: Mapped["Media"] = relationship(
         'Media',
+        foreign_keys=[photo_id],
         back_populates='user',
         lazy='selectin'
     )
@@ -47,6 +48,7 @@ class User(Base, AsyncAttrs):
     )
     visibility_type: Mapped["VisibilityType"] = relationship(
         'VisibilityType',
+        foreign_keys=[visibility_type_id],
         back_populates='users',
         lazy='selectin'
     )
@@ -63,11 +65,13 @@ class User(Base, AsyncAttrs):
     )
     favourite_contacts: Mapped[List["FavouriteContact"]] = relationship(
         'FavouriteContact',
+        foreign_keys="[FavouriteContact.owner_id]",
         back_populates='owner',
         lazy='selectin'
     )
     linked_contacts: Mapped[List["FavouriteContact"]] = relationship(
         'FavouriteContact',
+        foreign_keys="[FavouriteContact.linked_user_id]",
         back_populates='linked_user',
         lazy='selectin'
     )
@@ -99,11 +103,6 @@ class Media(Base, AsyncAttrs):
     media_link: Mapped[str] = mapped_column(String(255), nullable=False)
     is_photo: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
-    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey('users.id'),
-        nullable=False
-    )
     user: Mapped["User"] = relationship(
         'User',
         back_populates='photo',
@@ -143,6 +142,7 @@ class Token(Base, AsyncAttrs):
     )
     user: Mapped["User"] = relationship(
         'User',
+        foreign_keys=[user_id],
         back_populates='tokens',
         lazy='selectin'
     )
@@ -180,6 +180,7 @@ class UserDevice(Base, AsyncAttrs):
     )
     user: Mapped["User"] = relationship(
         'User',
+        foreign_keys=[user_id],
         back_populates='devices',
         lazy='selectin'
     )
@@ -191,6 +192,7 @@ class UserDevice(Base, AsyncAttrs):
     )
     device: Mapped["DeviceProduct"] = relationship(
         'DeviceProduct',
+        foreign_keys=[device_id],
         back_populates='users',
         lazy='selectin'
     )
@@ -219,6 +221,7 @@ class FavouriteContact(Base, AsyncAttrs):
     )
     owner: Mapped["User"] = relationship(
         'User',
+        foreign_keys=[owner_id],
         back_populates='favourite_contacts',
         lazy='selectin'
     )
@@ -230,6 +233,7 @@ class FavouriteContact(Base, AsyncAttrs):
     )
     linked_user: Mapped["User"] = relationship(
         'User',
+        foreign_keys=[linked_user_id],
         back_populates='linked_contacts',
         lazy='selectin'
     )
@@ -252,6 +256,7 @@ class Notification(Base, AsyncAttrs):
     )
     user: Mapped["User"] = relationship(
         'User',
+        foreign_keys=[user_id],
         back_populates='notifications',
         lazy='selectin'
     )
@@ -295,6 +300,7 @@ class Event(Base, AsyncAttrs):
     )
     user: Mapped["User"] = relationship(
         'User',
+        foreign_keys=[user_id],
         back_populates='events',
         lazy='selectin'
     )
@@ -334,6 +340,7 @@ class Observer(Base, AsyncAttrs):
     )
     user: Mapped["User"] = relationship(
         'User',
+        foreign_keys=[user_id],
         back_populates='observers',
         lazy='selectin'
     )
@@ -345,6 +352,7 @@ class Observer(Base, AsyncAttrs):
     )
     event: Mapped["Event"] = relationship(
         'Event',
+        foreign_keys=[event_id],
         back_populates='observers',
         lazy='selectin'
     )
