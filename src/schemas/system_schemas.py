@@ -15,7 +15,6 @@ class _UserCreate(BaseModel):
     patronymic: Optional[str] = Field(None, max_length=30, pattern=r'^[А-Яа-я-]+$')
     phone: str = Field(pattern=r'^\+7\d{10}$|^8\d{10}$')
     email: Optional[str] = Field(None, pattern=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-    city: str = Field(max_length=50)
     is_active: bool = True
 
     photo_id: Optional[UUID4] = None
@@ -81,8 +80,6 @@ class _MediaCreate(BaseModel):
     media_link: str = Field(max_length=255)
     is_photo: bool
 
-    user_id: Optional[UUID4]
-
 
 class _MediaUpdate(_MediaCreate):
     id: UUID4
@@ -102,7 +99,7 @@ class _VerificationCodeCreate(BaseModel):
 
 
 class _VerificationCodeUpdate(_VerificationCodeCreate):
-    pass
+    id: UUID4
 
 
 class _VerificationCodeGet(_VerificationCodeUpdate):
