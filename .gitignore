@@ -9,3 +9,5 @@ sangel_venv/
 .env
 test.py
 __pycache__
+migration
+alembic.ini

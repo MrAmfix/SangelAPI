@@ -1,7 +1,7 @@
 version: "3.0"
 services:
   db_test:
-    container_name: "db_test"
+    container_name: "sangel_db_test"
     image: postgres:14.1-alpine
     restart: always
     environment:

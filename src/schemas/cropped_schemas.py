@@ -18,7 +18,6 @@ class _UserCrop(BaseModel):
     patronymic: Optional[str] = None
     phone: str
     email: Optional[str] = None
-    city: str
     is_active: bool
 
     photo_id: Optional[UUID4] = None
@@ -33,8 +32,6 @@ class _MediaCrop(BaseModel):
     id: UUID4
     media_link: str
     is_photo: bool
-
-    user_id: Optional[UUID4] = None
 
     created_at: datetime
     updated_at: datetime
