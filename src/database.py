@@ -11,7 +11,7 @@ SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, autocommi
 Base = declarative_base()
 
 
-# В роутерах будем использовать session: AsyncSession = Depends(get_session)
+# В роутерах будем использовать session:AsyncSession = Depends(get_session)
 async def get_session() -> Generator:
     session: AsyncSession = SessionLocal()
     try:
