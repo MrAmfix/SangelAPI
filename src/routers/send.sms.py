@@ -31,6 +31,10 @@ async def send_sms_to_user(phone_number: str, session:AsyncSession = Depends(get
 
 async def check_verification_code(phone_number: str, code: str, session:AsyncSession = Depends(get_session)):
     try:
+        #
+        #TODO чек на протухание кода?
+        # чек на пролив трафика? сколько попыток нужно для ввода?
+        #
         user_verification  = await VerificationCodeCrud.get_by_param(session=session,phone_number=phone_number)
         if not (user_verification and user_verification.code == code):
             await VerificationCodeCrud.delete(session=session,record_id=user_verification.id)
