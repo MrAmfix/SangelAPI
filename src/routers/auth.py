@@ -116,7 +116,11 @@ async def get_access_handler(
         session: AsyncSession = Depends(get_session)
 ):
     try:
-        payload = await get_checked_token_data(refresh_token, session)
+        payload = await get_checked_token_data(
+            token=refresh_token,
+            session=session,
+            refresh=True
+        )
         if not payload:
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST,

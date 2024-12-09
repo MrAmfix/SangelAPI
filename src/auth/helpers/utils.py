@@ -6,7 +6,7 @@ from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.crud import UserCrud
+from src.crud import UserCrud, TokenCrud
 from src.settings import (JWT_ALGORITHM, JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
                           JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
 from src.utils.moscow_datetime import datetime_now_moscow
@@ -53,10 +53,16 @@ def get_token_data(token: str) -> dict:
     return {}
 
 
-async def get_checked_token_data(token: str, session: AsyncSession) -> dict:
+async def get_checked_token_data(token: str, session: AsyncSession, refresh: bool = False) -> dict:
     payload = verify_token(token)
     if not payload or 'user_id' not in payload:
         return {}
     if not await UserCrud.get_by_id(session=session, record_id=payload['user_id']):
+        return {}
+    if refresh and not await TokenCrud.get_filtered_by_params(
+        session=session,
+        user_id=payload['user_id'],
+        refresh_token=token
+    ):
         return {}
     return payload
