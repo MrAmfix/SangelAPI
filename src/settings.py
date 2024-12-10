@@ -4,7 +4,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = f'postgresql+asyncpg://{os.environ.get("DB_USER")}:{os.environ.get("DB_PASS")}@{os.environ.get("DB_HOST")}:{os.environ.get("DB_PORT")}/{os.environ.get("DB_NAME")}'
+
+if os.path.exists('/.dockerenv') or os.path.exists('/proc/self/cgroup'):
+    DB_HOST = os.environ.get("DB_HOST_DOCKER")
+    DB_PORT = os.environ.get("DB_PORT_DOCKER")
+else:
+    DB_HOST = os.environ.get("DB_HOST")
+    DB_PORT = os.environ.get("DB_PORT")
+
+DATABASE_URL = f'postgresql+asyncpg://{os.environ.get("DB_USER")}:{os.environ.get("DB_PASS")}@{DB_HOST}:{DB_PORT}/{os.environ.get("DB_NAME")}'
 
 JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
 JWT_ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("JWT_ACCESS_TOKEN_EXPIRE_MINUTES")

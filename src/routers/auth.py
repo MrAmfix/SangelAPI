@@ -1,22 +1,21 @@
 from typing import Optional
-from asyncpg.pgproto.pgproto import timedelta
-from fastapi import APIRouter, Depends, Query
+from datetime import timedelta
+from fastapi import APIRouter, Depends, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import HTTPException
 from starlette.status import HTTP_400_BAD_REQUEST
-from src.auth.helpers.utils import create_access_token, create_refresh_token, get_token_data, get_checked_token_data
+from src.auth.helpers.utils import create_access_token, create_refresh_token, get_checked_token_data
 from src.crud import UserCrud, VisibilityTypeCrud, VerificationCodeCrud, TokenCrud
 from src.database import get_session
 from src.utils.enums import DefaultVisibilityType
-from src.utils.moscow_datetime import datetime_now_moscow
+from src.utils.moscow_datetime import datetime_now_moscow, set_moscow_timezone
 
-
-auth = APIRouter(prefix='auth')
+auth = APIRouter(prefix='/auth')
 
 
 @auth.post('/send_code')
 async def send_code_handler(
-        phone: str,
+        phone: str = Body(..., embed=True),
         session: AsyncSession = Depends(get_session)
 ):
     try:
@@ -36,8 +35,8 @@ async def send_code_handler(
 
 @auth.post('/check_code')
 async def check_code_handler(
-        phone: str,
-        code: str,
+        phone: str = Body(...),
+        code: str = Body(...),
         session: AsyncSession = Depends(get_session)
 ):
     verification_code = await VerificationCodeCrud.get_last_code(
@@ -51,7 +50,7 @@ async def check_code_handler(
             detail='Неверно указан номер телефона'
         )
 
-    if verification_code.created_at < datetime_now_moscow() - timedelta(minutes=1):
+    if set_moscow_timezone(verification_code.created_at) < datetime_now_moscow() - timedelta(minutes=1):
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
             detail='Код уже истек'
@@ -68,11 +67,11 @@ async def check_code_handler(
 
 @auth.post('/registration')
 async def registration_handler(
-        name: str,
-        surname: str,
-        phone: str,
-        patronymic: Optional[str] = Query(None),
-        email: Optional[str] = Query(None),
+        name: str = Body(...),
+        surname: str = Body(...),
+        phone: str = Body(...),
+        patronymic: Optional[str] = Body(...),
+        email: Optional[str] = Body(...),
         session: AsyncSession = Depends(get_session)
 ):
     try:
@@ -112,7 +111,7 @@ async def registration_handler(
 
 @auth.post('/get_access')
 async def get_access_handler(
-        refresh_token: str,
+        refresh_token: str = Body(...),
         session: AsyncSession = Depends(get_session)
 ):
     try:
