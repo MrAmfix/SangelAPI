@@ -1,5 +1,4 @@
 from typing import Optional
-from datetime import timedelta
 from fastapi import APIRouter, Depends, Body
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,8 +9,8 @@ from src.crud import UserCrud, VisibilityTypeCrud, VerificationCodeCrud, TokenCr
 from src.database import get_session
 from src.settings import VERIFICATION_CODE_EXPIRE_SECONDS
 from src.utils.enums import DefaultVisibilityType
-from src.utils.moscow_datetime import datetime_now_moscow, set_moscow_timezone
 from src.utils.sms import check_expired_code
+
 
 auth = APIRouter(prefix='/auth')
 
