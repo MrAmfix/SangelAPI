@@ -1,14 +1,17 @@
 from typing import Optional
 from datetime import timedelta
 from fastapi import APIRouter, Depends, Body
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import HTTPException
-from starlette.status import HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_429_TOO_MANY_REQUESTS
 from src.auth.helpers.utils import create_access_token, create_refresh_token, get_checked_token_data
 from src.crud import UserCrud, VisibilityTypeCrud, VerificationCodeCrud, TokenCrud
 from src.database import get_session
+from src.settings import VERIFICATION_CODE_EXPIRE_SECONDS
 from src.utils.enums import DefaultVisibilityType
 from src.utils.moscow_datetime import datetime_now_moscow, set_moscow_timezone
+from src.utils.sms import check_expired_code
 
 auth = APIRouter(prefix='/auth')
 
@@ -19,6 +22,18 @@ async def send_code_handler(
         session: AsyncSession = Depends(get_session)
 ):
     try:
+        last_code = await VerificationCodeCrud.get_last_code(
+            phone=phone,
+            session=session
+        )
+
+        if last_code is None or check_expired_code(last_code.created_at):
+            raise HTTPException(
+                status_code=HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Код уже был отправлен ранее, повторная отправка возможна раз в "
+                       f"{VERIFICATION_CODE_EXPIRE_SECONDS} секунд"
+            )
+
         await VerificationCodeCrud.create(
             session=session,
             code='111111',
@@ -26,6 +41,11 @@ async def send_code_handler(
         )
 
         return {'detail': 'Код отправлен'}
+    except IntegrityError as _ie:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail='Неправильно указан номер телефона'
+        )
     except Exception as _e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
@@ -50,7 +70,7 @@ async def check_code_handler(
             detail='Неверно указан номер телефона'
         )
 
-    if set_moscow_timezone(verification_code.created_at) < datetime_now_moscow() - timedelta(minutes=1):
+    if check_expired_code(verification_code.created_at):
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
             detail='Код уже истек'
