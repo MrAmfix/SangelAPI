@@ -1,19 +1,20 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from src.routers.auth import auth
 from routers.image import router as image_router
 
 
 app = FastAPI()
 origins = [
-    "http://localhost", 
-    "http://localhost:3000", 
-    "http://127.0.0.1:3000",
-    ]
+    'http://localhost',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
     allow_headers=[
@@ -24,9 +25,12 @@ app.add_middleware(
         "Authorization",
     ],
 )
+
+
 # Подключаем все роутеры к App
+app.include_router(auth)
 
 app.include_router(router=image_router)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     uvicorn.run(app, host="localhost", port=8000)

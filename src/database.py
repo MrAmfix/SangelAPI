@@ -1,10 +1,8 @@
 from typing import Generator
-from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from src.settings import DATABASE_URL
 
-# load_dotenv()
 
 engine = create_async_engine(DATABASE_URL, future=True)
 SessionLocal = async_sessionmaker(

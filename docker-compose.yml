@@ -12,6 +12,30 @@ services:
       - "5433:5432"
     networks:
       - custom
+
+  backend:
+    container_name: "sangel_backend_test"
+    build: .
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_HOST_DOCKER=${DB_HOST_DOCKER}
+      - DB_PORT_DOCKER=${DB_PORT_DOCKER}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
+      - JWT_REFRESH_TOKEN_EXPIRE_MINUTES=${JWT_REFRESH_TOKEN_EXPIRE_MINUTES}
+      - VERIFICATION_CODE_EXPIRE_SECONDS=${VERIFICATION_CODE_EXPIRE_SECONDS}
+      - RUNNING_IN_DOCKER=1
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db_test
+    networks:
+      - custom
 networks:
   custom:
     driver: bridge
