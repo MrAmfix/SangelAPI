@@ -12,5 +12,6 @@ def check_expired_code(created_date: datetime):
     """
     True - код истек
     """
+
     return (set_moscow_timezone(created_date) < datetime_now_moscow()
-            - timedelta(seconds=VERIFICATION_CODE_EXPIRE_SECONDS))
+            - timedelta(seconds=int(VERIFICATION_CODE_EXPIRE_SECONDS)))
