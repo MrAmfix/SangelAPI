@@ -12,7 +12,7 @@ from src.utils.enums import DefaultVisibilityType
 from src.utils.sms import check_expired_code
 
 
-auth = APIRouter(prefix='/auth')
+auth = APIRouter(prefix='/api/auth')
 
 
 @auth.post('/send_code')
@@ -89,14 +89,14 @@ async def registration_handler(
         name: str = Body(...),
         surname: str = Body(...),
         phone: str = Body(...),
-        patronymic: Optional[str] = Body(...),
-        email: Optional[str] = Body(...),
+        patronymic: Optional[str] = Body(None),
+        email: Optional[str] = Body(None),
         session: AsyncSession = Depends(get_session)
 ):
     try:
-        visibility_type = await VisibilityTypeCrud.get_filtered_by_params(
-            session=session,
-            name=DefaultVisibilityType.ALL
+        visibility_type = await VisibilityTypeCrud.get_by_enum(
+            enum=DefaultVisibilityType.ALL,
+            session=session
         )
 
         user = await UserCrud.create(

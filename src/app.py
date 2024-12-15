@@ -2,9 +2,11 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers.auth import auth
-
+from src.routers.debug import debug
 
 app = FastAPI()
+
+
 origins = [
     'http://localhost',
     'http://localhost:3000',
@@ -22,6 +24,7 @@ app.add_middleware(
 
 # Подключаем все роутеры к App
 app.include_router(auth)
+app.include_router(debug)
 
 
 if __name__ == '__main__':
