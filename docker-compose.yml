@@ -32,9 +32,22 @@ services:
       - DEBUG_SECRET_KEY=${DEBUG_SECRET_KEY}
       - RUNNING_IN_DOCKER=1
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       - db_test
+    networks:
+      - custom
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./sangel.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./sangel.cert:/etc/nginx/sangel.cert:ro
+      - ./sangel.key:/etc/nginx/sangel_key:ro
+    depends_on:
+      - backend
     networks:
       - custom
 networks:
