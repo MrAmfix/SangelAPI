@@ -21,8 +21,6 @@ def create_test_user():
         surname="Иванов",
         patronymic="Иванович",
         phone="+71234567890",
-        email="test@test.by"
-
+        email="test@test.by",
     )
     return test_user.model_dump()
-
