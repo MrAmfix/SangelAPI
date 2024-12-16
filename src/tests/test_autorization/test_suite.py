@@ -81,7 +81,7 @@ def test_check_sms():
 def test_registration(create_test_user):
 
     run_async(create_visibility_type)
-    
+
     response = api_requests.registration_api_request(user=create_test_user)
     assert response.status_code == 200
 
@@ -95,13 +95,11 @@ def test_get_access(create_test_user):
     )
 
     assert response_from_registration.status_code == 200
-    
+
     response_json = response_from_registration.json()
     refresh_token = response_json.get("refresh_token")
 
-    sleep(
-        1
-    )  # Поставил задержку, потому что не успевало записывать токен в бд и при получении токена вылетает ошибка
+    sleep(1)    # Поставил задержку, потому что не успевало записывать токен в бд и при получении токена вылетает ошибка
 
     response_from_get_access = api_requests.get_access_api_request(token=refresh_token)
 

@@ -14,10 +14,12 @@ async def clear_all_tables():
                 await session.execute(table.delete())
             await session.commit()
 
+
 @pytest.fixture(scope="function", autouse=True)
 def clear_tables():
     loop = asyncio.get_event_loop()
     loop.run_until_complete(clear_all_tables())
+
 
 async def change_create_time(session, payload, time_expire_value):
     get_id_query = await VerificationCodeCrud.get_last_code(session=session, phone=payload)
@@ -26,6 +28,7 @@ async def change_create_time(session, payload, time_expire_value):
         session=session, 
         record_id=record.id, 
         created_at=time_expire_value)
+
 
 async def create_visibility_type(session,):
         await VisibilityTypeCrud.create(
