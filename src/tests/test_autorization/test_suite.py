@@ -79,7 +79,9 @@ def test_check_sms():
 
 
 def test_registration(create_test_user):
+
     run_async(create_visibility_type)
+    
     response = api_requests.registration_api_request(user=create_test_user)
     assert response.status_code == 200
 
