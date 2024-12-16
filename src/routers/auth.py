@@ -81,7 +81,27 @@ async def check_code_handler(
             detail='Неправильный код'
         )
 
-    return {'detail': 'Код верен'}
+    user = await UserCrud.get_filtered_by_params(session=session, phone=phone)
+
+    if user:
+        access_token = create_access_token(data={'user_id': str(user[0].id)})
+        refresh_token = create_refresh_token(data={'user_id': str(user[0].id)})
+        await TokenCrud.create(
+            session=session,
+            refresh_token=refresh_token,
+            user_id=user.id
+        )
+        return {
+            'detail': 'Код верен',
+            'is_authorized': True,
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }
+
+    return {
+        'detail': 'Код верен',
+        'is_authorized': False
+    }
 
 
 @auth.post('/registration')
