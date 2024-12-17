@@ -5,9 +5,9 @@ venv/
 .idea/
 /.idea/
 .env
-test.py
 migration
 alembic.ini
 __pycache__
 **__pycache__
-test/
+**/__pycache__/
+testdir
