@@ -9,3 +9,5 @@ test.py
 migration
 alembic.ini
 __pycache__
+**__pycache__
+test/
