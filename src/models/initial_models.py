@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
+from src.utils.moscow_datetime import datetime_now_moscow
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -30,8 +31,8 @@ class User(Base, AsyncAttrs):
     email: Mapped[Optional[str]] = mapped_column(String(255), unique=True, nullable=True, index=True)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow, onupdate=datetime_now_moscow)
 
 
 class Media(Base, AsyncAttrs):
@@ -42,8 +43,8 @@ class Media(Base, AsyncAttrs):
     media_link: Mapped[str] = mapped_column(String(255), nullable=False)
     is_photo: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow, onupdate=datetime_now_moscow)
 
 
 class VerificationCode(Base, AsyncAttrs):
@@ -57,7 +58,7 @@ class VerificationCode(Base, AsyncAttrs):
                                           default=uuid.uuid4)
     code: Mapped[str] = mapped_column(String(6), nullable=False)
     phone: Mapped[str] = mapped_column(String(15), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
 class Token(Base, AsyncAttrs):
@@ -67,7 +68,7 @@ class Token(Base, AsyncAttrs):
                                           default=uuid.uuid4)
     refresh_token: Mapped[str] = mapped_column(Text, nullable=False, unique=True, index=True)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
 class DeviceProduct(Base, AsyncAttrs):
@@ -77,7 +78,7 @@ class DeviceProduct(Base, AsyncAttrs):
                                           default=uuid.uuid4)
     mac_address: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
 class UserDevice(Base, AsyncAttrs):
@@ -86,7 +87,7 @@ class UserDevice(Base, AsyncAttrs):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
                                           default=uuid.uuid4)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
 class FavouriteContact(Base, AsyncAttrs):
@@ -101,7 +102,7 @@ class FavouriteContact(Base, AsyncAttrs):
     name: Mapped[str] = mapped_column(String(30), nullable=False)
     phone: Mapped[str] = mapped_column(String(15), nullable=False)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
 class Notification(Base, AsyncAttrs):
@@ -112,7 +113,7 @@ class Notification(Base, AsyncAttrs):
     title: Mapped[str] = mapped_column(Text, nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
 class VisibilityType(Base, AsyncAttrs):
@@ -136,9 +137,9 @@ class Event(Base, AsyncAttrs):
     start_latitude: Mapped[float] = mapped_column(Numeric(9, 6), nullable=False)
     start_longitude: Mapped[float] = mapped_column(Numeric(9, 6), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    complete_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    complete_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
 class Observer(Base, AsyncAttrs):
@@ -147,4 +148,4 @@ class Observer(Base, AsyncAttrs):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
                                           default=uuid.uuid4)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
