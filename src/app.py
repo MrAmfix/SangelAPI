@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers.auth import auth
-from routers.image import router as image_router
+from src.routers.image import image
 
 
 app = FastAPI()
@@ -29,8 +29,7 @@ app.add_middleware(
 
 # Подключаем все роутеры к App
 app.include_router(auth)
-
-app.include_router(router=image_router)
+app.include_router(image)
 
 if __name__ == '__main__':
     uvicorn.run(app, host="localhost", port=8000)

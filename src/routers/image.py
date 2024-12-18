@@ -3,30 +3,29 @@ import io
 from fastapi import Body, Depends, File, UploadFile, HTTPException, status
 from fastapi import APIRouter
 from PIL import Image, UnidentifiedImageError
-from settings import MAX_FILE_SIZE, UPLOAD_FOLDER
-from utils.image import image_name_rename
-from crud.UserCrud import UserCrud
-from crud.MediaCrud import MediaCrud
-from schemas import MediaModels
-from database import get_session
+from src.settings import MAX_FILE_SIZE, UPLOAD_FOLDER
+from src.utils.image import image_name_rename
+from src.crud.UserCrud import UserCrud
+from src.crud.MediaCrud import MediaCrud
+from src.database import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.auth import access_token_auth
 
-router = APIRouter(prefix="/api/client")
+image = APIRouter(prefix="/api/client")
 
 
-@router.post(
+@image.post(
     "/upload_photo",
     summary="Загрузка фотографии",
 )
-async def uploag_image(
+async def upload_image(
     auth_data: dict = Depends(access_token_auth),
     file: UploadFile = File(...),
     rewrite: bool = Body(default=True),
     session: AsyncSession = Depends(get_session),
 ):
 
-    user_id = auth_data['payload']['user_id']
+    user_id = auth_data['user'].id
 
     try:
         user_in_db = await UserCrud.get_by_id(session=session, record_id=user_id)
@@ -83,29 +82,30 @@ async def uploag_image(
             photo_query_get = await MediaCrud.get_by_id(
                 session=session, record_id=check_photo
             )
+            if not photo_query_get:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail="Нет фотографии."
+                )
             photo_name = photo_query_get.media_link
 
             if os.path.exists(UPLOAD_FOLDER):
                 os.remove("img/"+photo_name)
-            
+
             file.filename = image_name_rename(user_id, rewrite, img_name=photo_name)
-            
+
             file_path = os.path.join(UPLOAD_FOLDER, file.filename)
             with open(file_path, "wb") as buffer:
                 buffer.write(contents)
 
-            data = MediaModels.Update(
-                id=check_photo, media_link=file.filename, is_photo=True
-            ).model_dump()
             photo_query = await MediaCrud.update(
-                session=session, record_id=check_photo, **data
+                session=session, record_id=check_photo, id=check_photo, media_link=file.filename, is_photo=True
             )
 
         return {
             "detail": "Фото успешно загружено",
             "photo_id": photo_query.id
         }
-        
+
 
     except UnidentifiedImageError:
         raise HTTPException(
