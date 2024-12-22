@@ -1,7 +1,8 @@
 version: "3.0"
 services:
   backend:
-    environment:
+    build: .
+    environment: 
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
       DB_NAME: ${DB_NAME}
