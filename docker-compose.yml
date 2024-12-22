@@ -1,10 +1,7 @@
-version: "3.0"
 services:
   backend-api:
     build: 
       context: .
-      secrets:
-        - backend-secrets
     # environment: 
     #   DB_USER: ${DB_USER}
     #   DB_PASS: ${DB_PASS}
@@ -20,6 +17,8 @@ services:
     #   RUNNING_IN_DOCKER: 1
     ports:
       - "8001:8000"
+    secrets:
+      - backend-secrets
     networks:
       - swarm-network
   nginx:
