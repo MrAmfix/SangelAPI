@@ -1,7 +1,6 @@
 version: "3.0"
 services:
   backend:
-    container_name: "sangel_backend_test"
     build: .
     environment:
       - DB_USER=${DB_USER}
