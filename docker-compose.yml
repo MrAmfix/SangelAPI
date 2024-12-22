@@ -33,7 +33,7 @@ services:
     networks:
       - swarm-network
 
-config:
+configs:
   backend_config:
     external: true
 
