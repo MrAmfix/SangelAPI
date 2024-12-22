@@ -5,3 +5,11 @@ venv/
 .idea/
 /.idea/
 .env
+migration
+alembic.ini
+__pycache__
+**__pycache__
+**/__pycache__/
+testdir
+sangel.cert
+sangel.key
