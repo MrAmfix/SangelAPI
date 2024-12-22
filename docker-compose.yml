@@ -35,4 +35,4 @@ services:
       - custom
 networks:
   custom:
-    driver: bridge
+    driver: overlay
