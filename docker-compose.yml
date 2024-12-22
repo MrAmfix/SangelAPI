@@ -32,6 +32,11 @@ services:
       - backend-api
     networks:
       - swarm-network
+
+config:
+  backend_config:
+    external: true
+
 networks:
   swarm-network:
     driver: overlay
