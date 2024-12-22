@@ -17,6 +17,8 @@ services:
       RUNNING_IN_DOCKER: 1
     ports:
       - "8001:8000"
+    configs:
+      - backend-config
     networks:
       - swarm-network
   nginx:
@@ -34,7 +36,7 @@ services:
       - swarm-network
 
 configs:
-  backend_config:
+  backend-config:
     external: true
 
 networks:
