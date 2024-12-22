@@ -1,18 +1,5 @@
 version: "3.0"
 services:
-  db_test:
-    container_name: "sangel_db_test"
-    image: postgres:14.1-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres_test
-      - POSTGRES_PASSWORD=postgres_test
-      - POSTGRES_DB=postgres_test
-    ports:
-      - "5433:5432"
-    networks:
-      - custom
-
   backend:
     container_name: "sangel_backend_test"
     build: .
@@ -22,8 +9,6 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
-      - DB_HOST_DOCKER=${DB_HOST_DOCKER}
-      - DB_PORT_DOCKER=${DB_PORT_DOCKER}
       - JWT_ALGORITHM=${JWT_ALGORITHM}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
@@ -33,8 +18,6 @@ services:
       - RUNNING_IN_DOCKER=1
     ports:
       - "8001:8000"
-    depends_on:
-      - db_test
     networks:
       - custom
   nginx:
