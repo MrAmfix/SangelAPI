@@ -16,8 +16,6 @@ services:
       - RUNNING_IN_DOCKER=1
     ports:
       - "8001:8000"
-    env_file:
-      - .env
     networks:
       - custom
   nginx:
