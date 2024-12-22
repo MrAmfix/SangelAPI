@@ -1,20 +1,23 @@
 version: "3.0"
 services:
   backend-api:
-    build: .
-    environment: 
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
-      DB_NAME: ${DB_NAME}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      JWT_ALGORITHM: ${JWT_ALGORITHM}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
-      JWT_REFRESH_TOKEN_EXPIRE_MINUTES: ${JWT_REFRESH_TOKEN_EXPIRE_MINUTES}
-      VERIFICATION_CODE_EXPIRE_SECONDS: ${VERIFICATION_CODE_EXPIRE_SECONDS}
-      DEBUG_SECRET_KEY: ${DEBUG_SECRET_KEY}
-      RUNNING_IN_DOCKER: 1
+    build: 
+      context: .
+      secrets:
+        - backend-secrets
+    # environment: 
+    #   DB_USER: ${DB_USER}
+    #   DB_PASS: ${DB_PASS}
+    #   DB_NAME: ${DB_NAME}
+    #   DB_HOST: ${DB_HOST}
+    #   DB_PORT: ${DB_PORT}
+    #   JWT_ALGORITHM: ${JWT_ALGORITHM}
+    #   JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+    #   JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
+    #   JWT_REFRESH_TOKEN_EXPIRE_MINUTES: ${JWT_REFRESH_TOKEN_EXPIRE_MINUTES}
+    #   VERIFICATION_CODE_EXPIRE_SECONDS: ${VERIFICATION_CODE_EXPIRE_SECONDS}
+    #   DEBUG_SECRET_KEY: ${DEBUG_SECRET_KEY}
+    #   RUNNING_IN_DOCKER: 1
     ports:
       - "8001:8000"
     networks:
@@ -32,7 +35,9 @@ services:
       - backend-api
     networks:
       - swarm-network
-
+secrets:
+  backend-secrets:
+    file: ./.env
 networks:
   swarm-network:
     driver: overlay
