@@ -1,36 +1,15 @@
 version: "3.0"
 services:
-  backend:
-    container_name: "sangel_backend_test"
-    build: .
+  db_test:
+    container_name: "db_test"
+    image: postgres:14.1-alpine
+    restart: always
     environment:
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_NAME=${DB_NAME}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - JWT_ALGORITHM=${JWT_ALGORITHM}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
-      - JWT_REFRESH_TOKEN_EXPIRE_MINUTES=${JWT_REFRESH_TOKEN_EXPIRE_MINUTES}
-      - VERIFICATION_CODE_EXPIRE_SECONDS=${VERIFICATION_CODE_EXPIRE_SECONDS}
-      - DEBUG_SECRET_KEY=${DEBUG_SECRET_KEY}
-      - RUNNING_IN_DOCKER=1
+      - POSTGRES_USER=postgres_test
+      - POSTGRES_PASSWORD=postgres_test
+      - POSTGRES_DB=postgres_test
     ports:
-      - "8001:8000"
-    networks:
-      - custom
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./sangel.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./sangel.cert:/etc/nginx/sangel.cert:ro
-      - ./sangel.key:/etc/nginx/sangel_key:ro
-    depends_on:
-      - backend
+      - "5433:5432"
     networks:
       - custom
 networks:

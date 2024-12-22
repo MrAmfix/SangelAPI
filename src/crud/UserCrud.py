@@ -1,14 +1,14 @@
 from src.crud.base.factory import BaseCrudFactory
-from src.models import User
-from src.schemas import UserModels
+from src.models.User import User
+from src.schemas.system_schemas import UserUpdate, UserCreate, UserGet
 
 
 class UserCrud(
     BaseCrudFactory(
         model=User,
-        update_schema=UserModels.Update,
-        create_schema=UserModels.Create,
-        get_schema=UserModels.Get
+        update_schema=UserUpdate,
+        create_schema=UserCreate,
+        get_schema=UserGet
     )
 ):
     pass
