@@ -6,7 +6,6 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src /app/src
-RUN mv /run/secrets/.env /app/.env 
 
 ENV PYTHONPATH="${PYTHONPATH}:/app/src"
 EXPOSE 8000
