@@ -1,6 +1,6 @@
 version: "3.0"
 services:
-  backend:
+  backend-api:
     build: .
     environment: 
       DB_USER: ${DB_USER}
@@ -33,6 +33,6 @@ services:
     networks:
       - custom
 networks:
-  custom:
+  network:
     driver: overlay
     attachable: true
