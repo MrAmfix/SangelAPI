@@ -29,7 +29,7 @@ services:
       - ./sangel.cert:/etc/nginx/sangel.cert:ro
       - ./sangel.key:/etc/nginx/sangel_key:ro
     depends_on:
-      - backend
+      - backend-api
     networks:
       - swarm-network
 networks:
