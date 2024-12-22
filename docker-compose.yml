@@ -35,3 +35,4 @@ services:
 networks:
   custom:
     driver: overlay
+    attachable: true
