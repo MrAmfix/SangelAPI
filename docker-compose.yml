@@ -1,6 +1,6 @@
 version: "3.0"
 services:
-  backend-api:
+  backend_api:
     build: .
     ports:
       - "8001:8000"
@@ -14,17 +14,17 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./sangel.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./sangel.cert:/etc/nginx/sangel.cert:ro
-      - ./sangel.key:/etc/nginx/sangel.key:ro
+      - /server/sangel.conf:/etc/nginx/conf.d/default.conf:ro
+      - /server/sangel.cert:/etc/nginx/sangel.cert:ro
+      - /server/sangel.key:/etc/nginx/sangel.key:ro
     depends_on:
-      - backend-api
+      - backend_api
     networks:
       - swarm-network
 secrets:
   backend-secrets:
-    file: ./.env
+    file: /server/.env
 networks:
-  swarm-netw ork:
+  swarm-network:
     driver: overlay
     attachable: true
