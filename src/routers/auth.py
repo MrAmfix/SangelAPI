@@ -12,7 +12,7 @@ from src.utils.enums import DefaultVisibilityType
 from src.utils.sms import check_expired_code
 
 
-auth = APIRouter(prefix='/api/auth')
+auth = APIRouter(prefix='/auth')
 
 
 @auth.post('/send_code')
