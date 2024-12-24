@@ -26,7 +26,7 @@ async def send_code_handler(
             session=session
         )
 
-        if last_code is None or check_expired_code(last_code.created_at):
+        if last_code is not None and not check_expired_code(last_code.created_at):
             raise HTTPException(
                 status_code=HTTP_429_TOO_MANY_REQUESTS,
                 detail=f"Код уже был отправлен ранее, повторная отправка возможна раз в "
