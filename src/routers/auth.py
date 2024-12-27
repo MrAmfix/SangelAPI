@@ -18,10 +18,10 @@ auth = APIRouter(prefix='/auth')
 
 @auth.post('/send_code')
 async def send_code_handler(
-        phone_request: PhoneRequest = Body(...),
+        phone: PhoneRequest = Body(...),
         session: AsyncSession = Depends(get_session)
 ):
-    phone = phone_request.phone
+    phone = phone.phone
     try:
         last_code = await VerificationCodeCrud.get_last_code(
             phone=phone,
@@ -56,11 +56,11 @@ async def send_code_handler(
 
 @auth.post('/check_code')
 async def check_code_handler(
-        phone_request: PhoneRequest = Body(...),
+        phone: PhoneRequest = Body(...),
         code: str = Body(...),
         session: AsyncSession = Depends(get_session)
 ):
-    phone = phone_request.phone
+    phone = phone.phone
     verification_code = await VerificationCodeCrud.get_last_code(
         session=session,
         phone=phone
@@ -111,12 +111,12 @@ async def check_code_handler(
 async def registration_handler(
         name: str = Body(...),
         surname: str = Body(...),
-        phone_request: PhoneRequest = Body(...),
+        phone: PhoneRequest = Body(...),
         patronymic: Optional[str] = Body(None),
         email: Optional[str] = Body(None),
         session: AsyncSession = Depends(get_session)
 ):
-    phone = phone_request.phone
+    phone = phone.phone
     try:
         visibility_type = await VisibilityTypeCrud.get_by_enum(
             enum=DefaultVisibilityType.ALL,
