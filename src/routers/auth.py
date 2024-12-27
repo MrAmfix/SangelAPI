@@ -89,7 +89,7 @@ async def check_code_handler(
         await TokenCrud.create(
             session=session,
             refresh_token=refresh_token,
-            user_id=user.id
+            user_id=user[0].id
         )
         return {
             'detail': 'Код верен',
