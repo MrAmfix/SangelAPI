@@ -7,6 +7,7 @@ from starlette.status import HTTP_400_BAD_REQUEST, HTTP_429_TOO_MANY_REQUESTS
 from src.auth.helpers.utils import create_access_token, create_refresh_token, get_checked_token_data
 from src.crud import UserCrud, VisibilityTypeCrud, VerificationCodeCrud, TokenCrud
 from src.database import get_session
+from src.schemas.Formatters import PhoneRequest
 from src.settings import VERIFICATION_CODE_EXPIRE_SECONDS
 from src.utils.enums import DefaultVisibilityType
 from src.utils.sms import check_expired_code
@@ -17,9 +18,10 @@ auth = APIRouter(prefix='/auth')
 
 @auth.post('/send_code')
 async def send_code_handler(
-        phone: str = Body(..., embed=True),
+        phone_request: PhoneRequest = Body(...),
         session: AsyncSession = Depends(get_session)
 ):
+    phone = phone_request.phone
     try:
         last_code = await VerificationCodeCrud.get_last_code(
             phone=phone,
@@ -54,10 +56,11 @@ async def send_code_handler(
 
 @auth.post('/check_code')
 async def check_code_handler(
-        phone: str = Body(...),
+        phone_request: PhoneRequest = Body(...),
         code: str = Body(...),
         session: AsyncSession = Depends(get_session)
 ):
+    phone = phone_request.phone
     verification_code = await VerificationCodeCrud.get_last_code(
         session=session,
         phone=phone
@@ -108,11 +111,12 @@ async def check_code_handler(
 async def registration_handler(
         name: str = Body(...),
         surname: str = Body(...),
-        phone: str = Body(...),
+        phone_request: PhoneRequest = Body(...),
         patronymic: Optional[str] = Body(None),
         email: Optional[str] = Body(None),
         session: AsyncSession = Depends(get_session)
 ):
+    phone = phone_request.phone
     try:
         visibility_type = await VisibilityTypeCrud.get_by_enum(
             enum=DefaultVisibilityType.ALL,

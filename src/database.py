@@ -11,7 +11,9 @@ engine = create_async_engine(DATABASE_URL, future=True)
 
 @listens_for(engine.sync_engine, "connect")
 def test_connection(dbapi_connection, _):
-    dbapi_connection.execute("SELECT 1")
+    cursor = dbapi_connection.cursor()
+    cursor.execute("SELECT 1")
+    cursor.close()
 
 
 SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, autocommit=False,
@@ -19,7 +21,6 @@ SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, autocommi
 Base = declarative_base()
 
 
-# В роутерах будем использовать session: AsyncSession = Depends(get_session)
 async def get_session() -> Generator:
     session: AsyncSession = SessionLocal()
     try:
