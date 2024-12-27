@@ -151,7 +151,7 @@ async def registration_handler(
 
 @auth.post('/get_access')
 async def get_access_handler(
-        refresh_token: str = Body(...),
+        refresh_token: str = Body(..., embed=True),
         session: AsyncSession = Depends(get_session)
 ):
     try:
