@@ -29,10 +29,11 @@ def api_logs(handler):
         log_text = f"Handler: {handler.__name__} | Params: {params}"
 
         try:
+            logger.debug('----------------------------')
             logger.info(log_text)
             return await handler(*args, **kwargs)
         except Exception as e:
-            logger.error(f"{log_text} | Exception: {str(e)}")
+            logger.error(f"Exception: {str(e)}")
             raise
 
     return wrapper
