@@ -1,10 +1,21 @@
 import logging
 import inspect
 from functools import wraps
-import asyncio
+from colorlog import ColoredFormatter
 
 
 handler = logging.StreamHandler()
+formatter = ColoredFormatter(
+    "%(log_color)s%(levelname)s:%(reset)s %(message)s",
+    log_colors={
+        "DEBUG": "white",
+        "INFO": "cyan",
+        "WARNING": "yellow",
+        "ERROR": "red",
+        "CRITICAL": "bold_red",
+    },
+)
+handler.setFormatter(formatter)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
@@ -19,14 +30,9 @@ def api_logs(handler):
 
         try:
             logger.info(log_text)
-            await asyncio.sleep(0.01)
-            res = await handler(*args, **kwargs)
-            return res
+            return await handler(*args, **kwargs)
         except Exception as e:
             logger.error(f"{log_text} | Exception: {str(e)}")
             raise
-        finally:
-            print("---------------------------")
-            await asyncio.sleep(0.01)
 
     return wrapper
