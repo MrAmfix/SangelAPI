@@ -1,7 +1,7 @@
 import logging
 import inspect
 from functools import wraps
-from moscow_datetime import datetime_now_moscow
+from src.utils.moscow_datetime import datetime_now_moscow
 from fastapi import Request
 
 
