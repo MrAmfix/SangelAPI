@@ -10,6 +10,7 @@ from src.database import get_session
 from src.settings import VERIFICATION_CODE_EXPIRE_SECONDS
 from src.utils.enums import DefaultVisibilityType
 from src.utils.formatters import normalize_phone
+from src.utils.loggers import api_logs
 from src.utils.sms import check_expired_code
 
 
@@ -17,6 +18,7 @@ auth = APIRouter(prefix='/auth')
 
 
 @auth.post('/send_code')
+@api_logs
 async def send_code_handler(
         phone: str = Depends(normalize_phone),
         session: AsyncSession = Depends(get_session)
@@ -54,6 +56,7 @@ async def send_code_handler(
 
 
 @auth.post('/check_code')
+@api_logs
 async def check_code_handler(
         phone: str = Depends(normalize_phone),
         code: str = Body(...),
@@ -106,6 +109,7 @@ async def check_code_handler(
 
 
 @auth.post('/registration')
+@api_logs
 async def registration_handler(
         name: str = Body(...),
         surname: str = Body(...),
@@ -142,6 +146,11 @@ async def registration_handler(
             'access_token': access_token,
             'refresh_token': refresh_token
         }
+    except IntegrityError as _ie:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=f'Пользователь с номером {phone} уже зарегистрирован.'
+        )
     except Exception as _e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
@@ -150,6 +159,7 @@ async def registration_handler(
 
 
 @auth.post('/get_access')
+@api_logs
 async def get_access_handler(
         refresh_token: str = Body(..., embed=True),
         session: AsyncSession = Depends(get_session)
