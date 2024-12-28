@@ -1,6 +1,9 @@
 import logging
 import inspect
 from functools import wraps
+
+from starlette.status import HTTP_400_BAD_REQUEST
+
 from src.utils.moscow_datetime import datetime_now_moscow
 from fastapi import Request
 
@@ -12,16 +15,17 @@ logger = logging.getLogger(__name__)
 def api_logs(handler):
     @wraps(handler)
     async def wrapper(*args, **kwargs):
-        request: Request = next((arg for arg in args if isinstance(arg, Request)), None)
+        request: Request = kwargs.get('request', None) or next((arg for arg in args if isinstance(arg, Request)), None)
         path = request.url.path if request else "Unknown Path"
 
-        params = inspect.signature(handler).bind(*args, **kwargs).arguments
+        bound_arguments = inspect.signature(handler).bind(*args, **kwargs).arguments
+        params = {key: value for key, value in bound_arguments.items() if key != 'session'}
 
         logger.info(f"[{datetime_now_moscow()}] | API [{path}] | Params: {params} | Handler: {handler.__name__}")
         try:
             return await handler(*args, **kwargs)
         except Exception as e:
-            logger.error(f"Error in API [{path}]: {e}")
+            logger.error(f"[{datetime_now_moscow()}] | API [{path}] | Params: {params} | {e}")
             raise
 
     return wrapper
