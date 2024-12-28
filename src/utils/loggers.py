@@ -2,6 +2,7 @@ import logging
 import inspect
 from functools import wraps
 
+
 handler = logging.StreamHandler()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -14,6 +15,9 @@ def api_logs(handler):
         bound_arguments = inspect.signature(handler).bind(*args, **kwargs).arguments
         params = {key: value for key, value in bound_arguments.items() if key != 'session'}
         log_text = f"Handler: {handler.__name__} | Params: {params}"
+
+        uvicorn_logger = logging.getLogger("uvicorn.access")
+        uvicorn_logger.propagate = False
         error_occurred = False
 
         try:
@@ -26,6 +30,6 @@ def api_logs(handler):
         finally:
             if not error_occurred:
                 logger.info(log_text)
-            logger.debug("---------------------------")
+            print("---------------------------")
 
     return wrapper
