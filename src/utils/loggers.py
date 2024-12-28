@@ -1,42 +1,31 @@
-import inspect
 import logging
-import colorlog
+import inspect
 from functools import wraps
 
-
-handler = colorlog.StreamHandler()
-formatter = colorlog.ColoredFormatter(
-    "%(log_color)s%(levelname)s%(reset)s | %(message)s",
-    log_colors={
-        "DEBUG": "blue",
-        "INFO": "green",
-        "WARNING": "yellow",
-        "ERROR": "red",
-        "CRITICAL": "bold_red",
-    },
-)
-handler.setFormatter(formatter)
-logger = logging.getLogger("decorator_logger")
-logger.addHandler(handler)
+handler = logging.StreamHandler()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
 
 
-def api_logs(handler_func):
-    @wraps(handler_func)
+def api_logs(handler):
+    @wraps(handler)
     async def wrapper(*args, **kwargs):
-        # Получение аргументов функции
-        bound_arguments = inspect.signature(handler_func).bind(*args, **kwargs).arguments
+        bound_arguments = inspect.signature(handler).bind(*args, **kwargs).arguments
         params = {key: value for key, value in bound_arguments.items() if key != 'session'}
-        log_text = f"Handler: {handler_func.__name__} | Params: {params}"
+        log_text = f"Handler: {handler.__name__} | Params: {params}"
+        error_occurred = False
 
         try:
-            result = await handler_func(*args, **kwargs)
-            logger.info(log_text)
-            logger.debug("----------------------")
-            return result
+            res = await handler(*args, **kwargs)
+            return res
         except Exception as e:
+            error_occurred = True
             logger.error(f"{log_text} | Exception: {str(e)}")
-            logger.debug("----------------------")
             raise
+        finally:
+            if not error_occurred:
+                logger.info(log_text)
+            logger.debug("---------------------------")
 
     return wrapper
