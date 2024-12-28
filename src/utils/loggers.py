@@ -7,8 +7,7 @@ from colorlog import ColoredFormatter
 class CustomColoredFormatter(ColoredFormatter):
     def format(self, record):
         if record.levelname == "DEBUG":
-            self.log_colors["DEBUG"] = "white"
-            return f"{self.log_colors['DEBUG']}DEBUG:{self.reset} {record.getMessage()}"
+            return f"\033[37mDEBUG: {record.getMessage()}\033[0m"
         else:
             return super().format(record)
 
