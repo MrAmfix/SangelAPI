@@ -24,6 +24,7 @@ logger.setLevel(logging.DEBUG)
 def api_logs(handler_func):
     @wraps(handler_func)
     async def wrapper(*args, **kwargs):
+        # Получение аргументов функции
         bound_arguments = inspect.signature(handler_func).bind(*args, **kwargs).arguments
         params = {key: value for key, value in bound_arguments.items() if key != 'session'}
         log_text = f"Handler: {handler_func.__name__} | Params: {params}"
@@ -37,4 +38,5 @@ def api_logs(handler_func):
             logger.error(f"{log_text} | Exception: {str(e)}")
             logger.debug("----------------------")
             raise
+
     return wrapper
