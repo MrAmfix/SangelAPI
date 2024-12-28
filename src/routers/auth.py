@@ -48,6 +48,8 @@ async def send_code_handler(
             status_code=HTTP_400_BAD_REQUEST,
             detail='Неправильно указан номер телефона'
         )
+    except HTTPException as _he:
+        raise _he
     except Exception as _e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
