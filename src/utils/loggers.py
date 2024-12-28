@@ -1,10 +1,27 @@
 import logging
 import inspect
+import colorlog
 from functools import wraps
 
 
-logging.basicConfig(level=logging.INFO)
+formatter = colorlog.ColoredFormatter(
+    "%(log_color)s%(levelname)s%(reset)s | %(message)s",
+    log_colors={
+        "DEBUG": "blue",
+        "INFO": "green",
+        "WARNING": "yellow",
+        "ERROR": "red",
+        "CRITICAL": "bold_red",
+    },
+)
+
+
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
 
 
 def api_logs(handler):
@@ -16,12 +33,12 @@ def api_logs(handler):
 
         try:
             res = await handler(*args, **kwargs)
+            return res
         except Exception as e:
             logger.error(f"{log_text} | Exception: {str(e)}")
             raise
         finally:
             logger.info(log_text)
             logger.debug("---------------------------")
-        return res
 
     return wrapper
