@@ -1,3 +1,4 @@
+from idlelib.rpc import pickle_code
 from typing import Optional
 from fastapi import APIRouter, Depends, Body
 from sqlalchemy.exc import IntegrityError
@@ -17,8 +18,8 @@ from src.utils.sms import check_expired_code
 auth = APIRouter(prefix='/auth')
 
 
-@auth.post('/send_code')
 @api_logs
+@auth.post('/send_code')
 async def send_code_handler(
         phone: str = Depends(normalize_phone),
         session: AsyncSession = Depends(get_session)
@@ -55,8 +56,8 @@ async def send_code_handler(
         )
 
 
-@auth.post('/check_code')
 @api_logs
+@auth.post('/check_code')
 async def check_code_handler(
         phone: str = Depends(normalize_phone),
         code: str = Body(...),
@@ -108,8 +109,8 @@ async def check_code_handler(
     }
 
 
-@auth.post('/registration')
 @api_logs
+@auth.post('/registration')
 async def registration_handler(
         name: str = Body(...),
         surname: str = Body(...),
@@ -158,8 +159,8 @@ async def registration_handler(
         )
 
 
-@auth.post('/get_access')
 @api_logs
+@auth.post('/get_access')
 async def get_access_handler(
         refresh_token: str = Body(..., embed=True),
         session: AsyncSession = Depends(get_session)
