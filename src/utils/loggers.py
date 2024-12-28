@@ -1,6 +1,7 @@
 import logging
 import inspect
 from functools import wraps
+import asyncio
 
 
 handler = logging.StreamHandler()
@@ -16,20 +17,16 @@ def api_logs(handler):
         params = {key: value for key, value in bound_arguments.items() if key != 'session'}
         log_text = f"Handler: {handler.__name__} | Params: {params}"
 
-        uvicorn_logger = logging.getLogger("uvicorn.access")
-        uvicorn_logger.propagate = False
-        error_occurred = False
-
         try:
+            logger.info(log_text)
+            await asyncio.sleep(0.01)
             res = await handler(*args, **kwargs)
             return res
         except Exception as e:
-            error_occurred = True
             logger.error(f"{log_text} | Exception: {str(e)}")
             raise
         finally:
-            if not error_occurred:
-                logger.info(log_text)
             print("---------------------------")
+            await asyncio.sleep(0.01)
 
     return wrapper
