@@ -17,7 +17,7 @@ class CustomColoredFormatter(ColoredFormatter):
 
 handler = logging.StreamHandler()
 formatter = CustomColoredFormatter(
-    "%(log_color)s%(levelname)s:     %(reset)s %(message)s",
+    "%(log_color)s%(levelname)s:%(reset)s %(message)s",
     log_colors={
         "DEBUG": "white",
         "INFO": "cyan",
