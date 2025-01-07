@@ -3,6 +3,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 COPY requirements.txt /app/requirements.txt
+COPY .env /run/secrets/backend-secrets
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src /app/src
