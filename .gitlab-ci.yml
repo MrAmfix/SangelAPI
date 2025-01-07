@@ -55,6 +55,7 @@ trigger-dev-webhook:
     - curl -k $DEV_DEPLOY_WEBHOOk
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "Auth"
 
 trigger-main-webhook:
   stage: deploy
