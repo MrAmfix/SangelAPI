@@ -1,0 +1,67 @@
+default:
+  image: docker:27.4.1-cli
+  services:
+    - name: docker:dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+stages:
+  - generate-tag
+  - build
+  - deploy
+
+generate-tag:
+  stage: generate-tag
+  script:
+    - formatted_date=$(date -u -D $CI_PIPELINE_CREATED_AT +"%Y%m%d%H%M%S")
+    - echo "BUILD_TAG=$formatted_date-$CI_COMMIT_REF_SLUG" >> .env
+  artifacts:
+    reports:
+      dotenv: .env
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - Dockerfile
+  
+build-backend:
+  stage: build
+  variables:
+    DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE/backend:$BUILD_TAG
+  script:
+    - echo "$BACKEND_DOT_ENV_BASE_64" | base64 -d > ./.env
+    - echo "build using $DOCKER_IMAGE_NAME name:tag"
+    - docker build -t $DOCKER_IMAGE_NAME .
+    - docker push "$DOCKER_IMAGE_NAME"
+  
+build-nginx:
+  stage: build
+  variables:
+    DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE/nginx:$BUILD_TAG
+  script:
+    - docker build --push -t "$DOCKER_IMAGE_NAME" ./nginx
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - Dockerfile
+
+trigger-dev-webhook:
+  stage: deploy
+  before_script:
+    - apk add curl
+  script:
+    - curl -k $DEV_DEPLOY_WEBHOOk
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "Auth"
+
+trigger-main-webhook:
+  stage: deploy
+  before_script:
+    - apk add curl
+  script:
+    - curl -k $DEV_DEPLOY_WEBHOOk
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
