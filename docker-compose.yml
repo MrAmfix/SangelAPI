@@ -1,13 +1,13 @@
 version: "3.0"
 services:
   backend_api:
-    image: gitlab.sangel.ru:5005/root/sangelapi/backend:latest
+    image: ${CI_REGISTRY_IMAGE}/backend:latest
     ports:
       - "8001:8000"
     networks:
       - swarm-network
   nginx:
-    image: gitlab.sangel.ru:5005/root/sangelapi/nginx:latest
+    image: ${CI_REGISTRY_IMAGE}/nginx:latest
     ports:
       - "80:80"
       - "443:443"
