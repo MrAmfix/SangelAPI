@@ -2,7 +2,7 @@ workflow:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
-
+    - when: always
 default:
   image: docker:27.4.1-cli
   services:
