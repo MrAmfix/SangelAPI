@@ -6,7 +6,7 @@ from src.models import VisibilityType
 from src.settings import DEBUG_SECRET_KEY
 from src.utils.enums import DefaultVisibilityType
 
-debug = APIRouter(prefix='/api/debug')
+debug = APIRouter(prefix='/debug')
 
 
 @debug.post('/db_init_vis_type', include_in_schema=False)

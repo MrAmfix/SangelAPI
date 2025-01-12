@@ -11,6 +11,7 @@ def generate_code():
 def check_expired_code(created_date: datetime):
     """
     True - код истек
+    False - код еще действует
     """
 
     return (set_moscow_timezone(created_date) < datetime_now_moscow()

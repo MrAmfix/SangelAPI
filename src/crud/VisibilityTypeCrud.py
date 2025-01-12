@@ -21,7 +21,7 @@ class VisibilityTypeCrud(
     async def get_by_enum(enum: DefaultVisibilityType, session: AsyncSession) -> Optional[VisibilityTypeModels.Get]:
         result = await session.execute(
             select(VisibilityType)
-            .where(name=enum)
+            .filter_by(name=enum)
         )
         result = result.scalars().first()
 
