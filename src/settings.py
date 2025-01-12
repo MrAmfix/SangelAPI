@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 
-load_dotenv()
+load_dotenv(dotenv_path="/run/secrets/backend-secrets")
 
 
 DATABASE_URL = (f'postgresql+asyncpg://{os.environ.get("DB_USER")}:{os.environ.get("DB_PASS")}@'

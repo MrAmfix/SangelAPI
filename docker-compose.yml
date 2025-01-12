@@ -1,38 +1,24 @@
 version: "3.0"
 services:
-  backend:
-    container_name: "sangel_backend_test"
-    build: .
-    environment:
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_NAME=${DB_NAME}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - JWT_ALGORITHM=${JWT_ALGORITHM}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
-      - JWT_REFRESH_TOKEN_EXPIRE_MINUTES=${JWT_REFRESH_TOKEN_EXPIRE_MINUTES}
-      - VERIFICATION_CODE_EXPIRE_SECONDS=${VERIFICATION_CODE_EXPIRE_SECONDS}
-      - DEBUG_SECRET_KEY=${DEBUG_SECRET_KEY}
-      - RUNNING_IN_DOCKER=1
+  backend_api:
+    image: ${CI_REGISTRY_IMAGE}/backend:latest
     ports:
       - "8001:8000"
     networks:
-      - custom
+      - swarm-network
   nginx:
-    image: nginx:latest
+    image: ${CI_REGISTRY_IMAGE}/nginx:latest
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./sangel.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./sangel.cert:/etc/nginx/sangel.cert:ro
-      - ./sangel.key:/etc/nginx/sangel_key:ro
+      - /server/sangel.cert:/etc/nginx/sangel.cert:ro
+      - /server/sangel.key:/etc/nginx/sangel.key:ro
     depends_on:
-      - backend
+      - backend_api
     networks:
-      - custom
+      - swarm-network
+
 networks:
-  custom:
-    driver: bridge
+  swarm-network:
+    driver: overlay
