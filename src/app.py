@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers.auth import auth
 from src.routers.debug import debug
-from src.routers.settings import settings
+from src.routers.media import media
 
 app = FastAPI()
 
@@ -26,7 +26,7 @@ app.add_middleware(
 # Подключаем все роутеры к App
 app.include_router(auth)
 app.include_router(debug)
-app.include_router(settings)
+app.include_router(media)
 
 
 if __name__ == '__main__':
