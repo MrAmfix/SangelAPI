@@ -13,3 +13,5 @@ __pycache__
 testdir
 sangel.cert
 sangel.key
+test
+test/
