@@ -14,7 +14,7 @@ from src.utils.loggers import api_logs
 settings = APIRouter(prefix='/settings')
 
 
-@settings.put('/set_visibility_type')
+@settings.post('/set_visibility_type')
 @api_logs
 async def set_visibility_type_handler(
         auth_data: dict = Depends(access_token_auth),
@@ -42,3 +42,5 @@ async def set_visibility_type_handler(
             status_code=HTTP_400_BAD_REQUEST,
             detail=str(_e)
         )
+
+
