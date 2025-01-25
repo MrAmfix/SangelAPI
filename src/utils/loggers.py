@@ -44,7 +44,7 @@ def api_logs(handler):
             logger.info(log_text)
             return await handler(*args, **kwargs)
         except Exception as e:
-            logger.error(f"Exception: {str(e)}")
+            logger.error(f"{type(e)}: {str(e)}")
             raise
 
     return wrapper
