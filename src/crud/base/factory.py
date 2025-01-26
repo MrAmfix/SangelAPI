@@ -5,6 +5,7 @@ from sqlalchemy import update, select, delete, Select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 
+from src.models import FavouriteContact
 
 Schema = TypeVar("Schema", bound=BaseModel, covariant=True)
 Model = TypeVar("Model", bound=declarative_base())
@@ -53,6 +54,15 @@ class CrudFactory:
         res = await session.execute(select(cls.base_model).filter_by(**kwargs))
         objects = res.scalars().all()
         return [cls.get_schema.model_validate(obj) for obj in objects]
+
+    @classmethod
+    async def get_favourite_contact(cls, session: AsyncSession, record_id: UUID, phone: str) -> Schema | None:
+        res = await session.execute(select(FavouriteContact)
+                                    .where(FavouriteContact.owner_id == record_id,
+                                           FavouriteContact.phone == phone
+                                           ))
+        obj = res.scalar_one_or_none()
+        return obj
 
     @classmethod
     async def get_filtered(cls, session: AsyncSession, filter) -> list[Schema]:
