@@ -24,16 +24,7 @@ async def upload_image(
     session: AsyncSession = Depends(get_session),
 ):
 
-    user_id = auth_data['user'].id
-
     try:
-        user_in_db = await UserCrud.get_by_id(session=session, record_id=user_id)
-        if not user_in_db:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Неверный токен",
-            )
-
         if file.content_type not in ["image/jpeg", "image/png"]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -57,50 +48,56 @@ async def upload_image(
             if img.format not in ["JPEG", "PNG"]:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Ошибка: Недпустимый формат. Только JPEG и PNG разрешены",
+                    detail="Ошибка: Недопустимый формат. Только JPEG и PNG разрешены",
                 )
             img.verify()
 
         if not os.path.exists(UPLOAD_FOLDER):
             os.makedirs(UPLOAD_FOLDER)
 
-        check_photo = user_in_db.photo_id
+        if not auth_data['user'].photo_id:
 
-        if not check_photo:
-
-            file.filename = image_name_rename(user_id, rewrite, img_name=None)
+            file.filename = image_name_rename(auth_data['user'].id, rewrite, img_name=None)
             file_path = os.path.join(UPLOAD_FOLDER, file.filename)
             with open(file_path, "wb") as buffer:
                 buffer.write(contents)
 
-            photo_query = await MediaCrud.create(session=session, media_link=file.filename, is_photo=True)
+            photo_query = await MediaCrud.create(session=session,
+                                                 media_link=file.filename,
+                                                 is_photo=True)
 
             await UserCrud.update(
-                session=session, record_id=user_id, photo_id=photo_query.id
+                session=session,
+                record_id=auth_data['user'].id,
+                photo_id=photo_query.id
             )
 
-        elif rewrite:
+        elif auth_data['user'].photo_id and rewrite is True:
 
             photo_query_get = await MediaCrud.get_by_id(
-                session=session, record_id=check_photo
+                session=session, record_id=auth_data['user'].photo_id,
             )
             if not photo_query_get:
                 raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="Ошибка: Нет фотографии."
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Ошибка: Нет фотографии."
                 )
             photo_name = photo_query_get.media_link
 
             if os.path.exists(UPLOAD_FOLDER):
                 os.remove("img/"+photo_name)
 
-            file.filename = image_name_rename(user_id, rewrite, img_name=photo_name)
-
-            file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+            file.filename = photo_name
+            file_path = os.path.join(UPLOAD_FOLDER, photo_name)
             with open(file_path, "wb") as buffer:
                 buffer.write(contents)
 
             photo_query = await MediaCrud.update(
-                session=session, record_id=check_photo, id=check_photo, media_link=file.filename, is_photo=True
+                session=session,
+                record_id=auth_data['user'].photo_id,
+                id=auth_data['user'].photo_id,
+                media_link=file.filename,
+                is_photo=True
             )
 
         return {
@@ -108,10 +105,10 @@ async def upload_image(
             "photo_id": photo_query.id
         }
 
-
     except UnidentifiedImageError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Ошибка: Файл не является изображением."
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Ошибка: Файл не является изображением."
         )
     except FileNotFoundError:
         raise HTTPException(
@@ -122,4 +119,9 @@ async def upload_image(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Ошибка: Системная ошибка: {str(e)}" ,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ошибка: {str(e)}" ,
         )
