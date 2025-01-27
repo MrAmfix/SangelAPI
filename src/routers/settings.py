@@ -89,7 +89,7 @@ async def edit_account_handler(
 @api_logs
 async def del_favourite_contact_handler(
         auth_data: dict = Depends(access_token_auth),
-        phone: Optional[str] = Body(...),
+        phone: str = Body(...),
         session: AsyncSession = Depends(get_session)
 ):
     user_id = auth_data['user'].id
@@ -119,4 +119,50 @@ async def del_favourite_contact_handler(
             status_code=HTTP_400_BAD_REQUEST,
             detail=str(_e)
         )
+
+
+@settings.post('/add_favourite_contact')
+@api_logs
+async def add_favourite_contact_handler(
+        auth_data: dict = Depends(access_token_auth),
+        name: str = Body(...),
+        phone: str = Body(...),
+        session: AsyncSession = Depends(get_session)
+):
+    user_id = auth_data['user'].id
+
+    try:
+        favourite_contact = await FavouriteContactCrud.get_filtered_by_params(
+            session=session,
+            owner_id=user_id,
+            phone=phone
+        )
+
+        if favourite_contact:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail="Такой контакт уже есть!"
+            )
+
+        linked_user = await UserCrud.get_filtered_by_params(
+            session=session,
+            phone=phone
+        )
+
+        new_favourite_contact = await UserCrud.create(
+            session=session,
+            phone=phone,
+            name=name,
+            owner_id=user_id,
+            linked_user_id=linked_user.id if linked_user else None
+        )
+
+        return {'detail': 'Контакт добавлен!'}
+
+    except Exception as _e:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=str(_e)
+        )
+
 
