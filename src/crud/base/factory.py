@@ -56,15 +56,6 @@ class CrudFactory:
         return [cls.get_schema.model_validate(obj) for obj in objects]
 
     @classmethod
-    async def get_favourite_contact(cls, session: AsyncSession, record_id: UUID, phone: str) -> Schema | None:
-        res = await session.execute(select(FavouriteContact)
-                                    .where(FavouriteContact.owner_id == record_id,
-                                           FavouriteContact.phone == phone
-                                           ))
-        obj = res.scalar_one_or_none()
-        return obj
-
-    @classmethod
     async def get_filtered(cls, session: AsyncSession, filter) -> list[Schema]:
         res = await session.execute(select(cls.base_model).filter(filter))
         objects = res.scalars().all()

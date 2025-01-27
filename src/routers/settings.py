@@ -8,8 +8,10 @@ from starlette.exceptions import HTTPException
 from starlette.status import HTTP_400_BAD_REQUEST
 
 from src.auth.auth import access_token_auth
-from src.crud import UserCrud, VisibilityTypeCrud
+from src.crud import UserCrud, VisibilityTypeCrud, FavouriteContactCrud
+from src.crud.base.factory import CrudFactory
 from src.database import get_session
+from src.models import UserDevice, FavouriteContact
 from src.utils.enums import DefaultVisibilityType
 from src.utils.loggers import api_logs
 
@@ -82,3 +84,39 @@ async def edit_account_handler(
             status_code=HTTP_400_BAD_REQUEST,
             detail=str(_e)
         )
+
+@settings.delete('/del_favourite_contact')
+@api_logs
+async def del_favourite_contact_handler(
+        auth_data: dict = Depends(access_token_auth),
+        phone: Optional[str] = Body(...),
+        session: AsyncSession = Depends(get_session)
+):
+    user_id = auth_data['user'].id
+
+    try:
+        favourite_contact = await FavouriteContactCrud.get_filtered_by_params(
+            session=session,
+            owner_id=user_id,
+            phone=phone
+        )
+
+        if not favourite_contact:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail="Этого избранного контакта не существует!"
+            )
+
+        request = await FavouriteContactCrud.delete(
+            session=session,
+            record_id=favourite_contact.id
+        )
+
+        return {'detail': 'Контакт удалён!'}
+
+    except Exception as _e:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=str(_e)
+        )
+
