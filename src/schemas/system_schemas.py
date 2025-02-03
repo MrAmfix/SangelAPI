@@ -86,7 +86,7 @@ class _MediaUpdate(_MediaCreate):
 
 
 class _MediaGet(_MediaUpdate):
-    user: "_UserCrop"
+    user: Optional["_UserCrop"]
 
     created_at: datetime
     updated_at: datetime
