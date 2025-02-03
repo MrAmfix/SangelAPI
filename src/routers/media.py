@@ -20,7 +20,6 @@ media = APIRouter(prefix="/media")
 async def upload_image(
     auth_data: dict = Depends(access_token_auth),
     file: UploadFile = File(...),
-    rewrite: bool = Body(default=True),
     session: AsyncSession = Depends(get_session),
 ):
 
@@ -57,7 +56,7 @@ async def upload_image(
 
         if not auth_data['user'].photo_id:
 
-            file.filename = image_name_rename(auth_data['user'].id, rewrite, img_name=None)
+            file.filename = image_name_rename(auth_data['user'].id)
             file_path = os.path.join(UPLOAD_FOLDER, file.filename)
             with open(file_path, "wb") as buffer:
                 buffer.write(contents)
@@ -72,7 +71,7 @@ async def upload_image(
                 photo_id=photo_query.id
             )
 
-        elif auth_data['user'].photo_id and rewrite is True:
+        else:
 
             photo_query_get = await MediaCrud.get_by_id(
                 session=session, record_id=auth_data['user'].photo_id,
