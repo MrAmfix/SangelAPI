@@ -24,7 +24,7 @@ generate tag:
   artifacts:
     reports:
       dotenv: .env
-  rules:
+  rules: 
     - changes:
         - $NGINX_PATH/**/*
         - $SRC_PATH/**/*
