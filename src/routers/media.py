@@ -1,6 +1,6 @@
 import os
 import io
-from fastapi import Body, Depends, File, UploadFile, HTTPException, status
+from fastapi import Depends, File, UploadFile, HTTPException, status
 from fastapi import APIRouter
 from PIL import Image, UnidentifiedImageError
 from src.settings import MAX_FILE_SIZE, UPLOAD_FOLDER
@@ -122,5 +122,5 @@ async def upload_image(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ошибка: {str(e)}" ,
+            detail=f"Ошибка: {str(e)}"
         )

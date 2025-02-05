@@ -1,10 +1,11 @@
 from typing import Optional
-from fastapi import APIRouter, Depends, Body, HTTPException
+from fastapi import APIRouter, Depends, Body, HTTPException, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.status import HTTP_400_BAD_REQUEST
 from src.auth.auth import access_token_auth
 from src.crud import UserCrud, VisibilityTypeCrud, FavouriteContactCrud
 from src.database import get_session
+from src.routers.media import upload_image
 from src.utils.enums import DefaultVisibilityType
 from src.utils.loggers import api_logs
 
@@ -149,3 +150,17 @@ async def add_favourite_contact_handler(
             status_code=HTTP_400_BAD_REQUEST,
             detail=str(_e)
         )
+
+
+@settings.post('/edit_photo')
+@api_logs
+async def edit_photo_handler(
+        auth_data: dict = Depends(access_token_auth),
+        photo: UploadFile = File(...),
+        session: AsyncSession = Depends(get_session),
+):
+    await upload_image(
+        auth_data=auth_data,
+        file=photo,
+        session=session
+    )
