@@ -1,17 +1,10 @@
 from typing import Optional
-
-from fastapi import APIRouter, Depends, Body
-from pydantic.v1 import NoneBytes
-from sqlalchemy.exc import IntegrityError
+from fastapi import APIRouter, Depends, Body, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.exceptions import HTTPException
 from starlette.status import HTTP_400_BAD_REQUEST
-
 from src.auth.auth import access_token_auth
 from src.crud import UserCrud, VisibilityTypeCrud, FavouriteContactCrud
-from src.crud.base.factory import CrudFactory
 from src.database import get_session
-from src.models import UserDevice, FavouriteContact
 from src.utils.enums import DefaultVisibilityType
 from src.utils.loggers import api_logs
 
@@ -31,22 +24,18 @@ async def set_visibility_type_handler(
 
     try:
         await UserCrud.update(
-            visibility_type_id=visibility_type_id,
             session=session,
-            record_id=user_id
+            record_id=user_id,
+            visibility_type_id=visibility_type_id
         )
 
         return {'detail': 'Тип установлен'}
-    except IntegrityError as _ie:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST,
-            detail=f'Неправильный формат аргументов'
-        )
     except Exception as _e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
             detail=str(_e)
         )
+
 
 @settings.post('/edit_account')
 @api_logs
@@ -74,16 +63,12 @@ async def edit_account_handler(
         )
         return {'detail': 'Изменения прошли успешно'}
 
-    except IntegrityError as _ie:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST,
-            detail=f'Неправильный формат аргументов'
-        )
     except Exception as _e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
             detail=str(_e)
         )
+
 
 @settings.delete('/del_favourite_contact')
 @api_logs
@@ -164,5 +149,3 @@ async def add_favourite_contact_handler(
             status_code=HTTP_400_BAD_REQUEST,
             detail=str(_e)
         )
-
-
