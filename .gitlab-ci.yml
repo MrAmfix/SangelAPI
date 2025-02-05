@@ -15,13 +15,8 @@ variables:
   SRC_PATH: src
   NGINX_PATH: nginx
 
-stages:
-  - generate-tag
-  - build
-  - deploy
-
 generate tag:
-  stage: generate-tag
+  stage: .pre
   script:
     - formatted_date=$(date -u -D $CI_PIPELINE_CREATED_AT +"%Y%m%d%H%M%S")
     # - echo "BUILD_TAG=$formatted_date-$CI_COMMIT_REF_SLUG" >> .env
