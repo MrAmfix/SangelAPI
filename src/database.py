@@ -18,7 +18,6 @@ def test_connection(dbapi_connection, _):
 
 SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, autocommit=False,
                                   autoflush=False, class_=AsyncSession, future=True)
-Base = declarative_base()
 
 
 async def get_session() -> Generator:

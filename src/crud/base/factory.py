@@ -5,6 +5,7 @@ from sqlalchemy import update, select, delete, Select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 
+from src.models import FavouriteContact
 
 Schema = TypeVar("Schema", bound=BaseModel, covariant=True)
 Model = TypeVar("Model", bound=declarative_base())
