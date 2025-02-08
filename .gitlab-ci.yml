@@ -32,8 +32,6 @@ build source:
   tags:
     - dockernaya
   image: docker:$DOCKER_VERSION_TAG-dind
-  # services:
-  #   - name: docker:$DOCKER_VERSION_TAG-dind
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
@@ -53,8 +51,6 @@ build nginx:
   tags:
     - dockernaya
   image: docker:$DOCKER_VERSION_TAG-dind
-  # services:
-  #   - name: docker:$DOCKER_VERSION_TAG-dind
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
