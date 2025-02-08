@@ -135,7 +135,7 @@ async def add_favourite_contact_handler(
             phone=phone
         )
 
-        new_favourite_contact = await UserCrud.create(
+        new_favourite_contact = await FavouriteContactCrud.create(
             session=session,
             phone=phone,
             name=name,
