@@ -3,13 +3,6 @@ workflow:
     - if: $CI_COMMIT_BRANCH == 'develop'
     - if: $CI_COMMIT_BRANCH == 'main'
 
-default:
-  image: docker:27.4.1-cli
-  services:
-    - name: docker:dind
-  before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-
 variables:
   DOCKER_DRIVER: overlay2
   SRC_PATH: src
@@ -33,6 +26,10 @@ build source:
   stage: build
   variables:
     DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE/backend
+  tags:
+    - dockernaya
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
     - echo "$BACKEND_DOT_ENV_BASE_64" | base64 -d > ./.env
     - echo "build using $DOCKER_IMAGE_NAME:$BUILD_TAG name:tag"
@@ -42,10 +39,14 @@ build source:
     - changes:
       - $SRC_PATH/**/*
   
-build-nginx:
+build nginx:
   stage: build
   variables:
     DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE/nginx
+  tags:
+    - dockernaya
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
     - docker build -t "$DOCKER_IMAGE_NAME" ./nginx
     - docker push "$DOCKER_IMAGE_NAME:$BUILD_TAG"
@@ -55,8 +56,8 @@ build-nginx:
 
 deploy nginx:
   stage: deploy
-  before_script:
-    - apk add curl
+  tags:
+    - curlitel
   script:
     - curl -k --request POST $DEPLOY_NGINX_WEBHOOK_URL
   rules:
@@ -65,6 +66,8 @@ deploy nginx:
 
 deploy source:
   stage: deploy
+  tags:
+    - curlitel
   before_script:
     - apk add curl
   script:
