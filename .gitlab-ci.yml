@@ -6,7 +6,7 @@ workflow:
 default:
   image: docker:27.4.1-cli
   services:
-    - name: docker:dind
+    - name: docker:27.4.1-dind
 
 
 variables:
