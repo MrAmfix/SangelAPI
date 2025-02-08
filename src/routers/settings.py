@@ -71,7 +71,7 @@ async def edit_account_handler(
 @api_logs(settings.delete('/del_favourite_contact'))
 async def del_favourite_contact_handler(
         auth_data: dict = Depends(access_token_auth),
-        phone: str = Body(...),
+        phone: str = Body(..., embed=True),
         session: AsyncSession = Depends(get_session)
 ):
     user_id = auth_data['user'].id
