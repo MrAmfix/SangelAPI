@@ -7,8 +7,7 @@ from src.crud import UserCrud, VisibilityTypeCrud, FavouriteContactCrud
 from src.database import get_session
 from src.routers.media import upload_image
 from src.utils.enums import DefaultVisibilityType
-from src.utils.loggers import api_logs
-
+from src.utils.loggers import api_logs, with_api_logs
 
 settings = APIRouter(prefix='/settings')
 
@@ -71,8 +70,8 @@ async def edit_account_handler(
         )
 
 
+@with_api_logs
 @settings.delete('/del_favourite_contact')
-@api_logs
 async def del_favourite_contact_handler(
         auth_data: dict = Depends(access_token_auth),
         phone: str = Body(...),
