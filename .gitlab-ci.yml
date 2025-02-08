@@ -2,6 +2,7 @@ workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == 'develop'
     - if: $CI_COMMIT_BRANCH == 'main'
+    - if: $CI_COMMIT_BRANCH == 'cicd'
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -22,6 +23,7 @@ generate tag:
     - changes:
         - $NGINX_PATH/**/*
         - $SRC_PATH/**/*
+    - if: $CI_COMMIT_BRANCH == 'cicd'
 
 build source:
   stage: build
@@ -42,7 +44,8 @@ build source:
   rules:
     - changes:
       - $SRC_PATH/**/*
-  
+    - if: $CI_COMMIT_BRANCH == 'cicd'
+
 build nginx:
   stage: build
   variables:
@@ -60,6 +63,8 @@ build nginx:
   rules:
     - changes:
       - $NGINX_PATH/**/*
+    - if: $CI_COMMIT_BRANCH == 'cicd'
+    
 
 deploy nginx:
   stage: deploy
