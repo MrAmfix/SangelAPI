@@ -10,13 +10,13 @@ from src.crud.MediaCrud import MediaCrud
 from src.database import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.auth import access_token_auth
+from src.utils.loggers import api_logs
+
 
 media = APIRouter(prefix="/media")
 
 
-@media.post(
-    "/edit_photo",
-)
+@api_logs(media.post("/edit_photo"))
 async def upload_image(
     auth_data: dict = Depends(access_token_auth),
     file: UploadFile = File(...),

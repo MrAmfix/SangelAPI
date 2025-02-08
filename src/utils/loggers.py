@@ -33,7 +33,7 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
 
-def api_logs(handler):
+def _sub_api_logs(handler):
     @wraps(handler)
     async def wrapper(*args, **kwargs):
         bound_arguments = inspect.signature(handler).bind(*args, **kwargs).arguments
@@ -41,7 +41,7 @@ def api_logs(handler):
 
         log_text = ''
         if 'auth_data' in bound_arguments:
-            user = bound_arguments['auth_data']
+            user = bound_arguments['auth_data']['user']
             log_text += f'User: ID({user.id}), PHONE({user.phone})\n'
 
         log_text += f'Handler: {handler.__name__} | Params: {params}'
@@ -58,7 +58,12 @@ def api_logs(handler):
     return wrapper
 
 
-def with_api_logs(handler):
-    def decorator(fastapi_handler):
-        return api_logs(fastapi_handler)
-    return decorator
+def api_logs(route_decorator):
+    def wrapper(handler):
+        wrapped_handler = _sub_api_logs(handler)
+        return route_decorator(wrapped_handler)
+    return wrapper
+
+
+
+
