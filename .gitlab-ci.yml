@@ -37,7 +37,7 @@ build source:
   script:
     - echo "$BACKEND_DOT_ENV_BASE_64" | base64 -d > ./.env
     - echo "build using $DOCKER_IMAGE_NAME:$BUILD_TAG name:tag"
-    - docker build -t $DOCKER_IMAGE_NAME .
+    - docker build -t --no-cache $DOCKER_IMAGE_NAME .
     - docker push "$DOCKER_IMAGE_NAME:$BUILD_TAG"
   rules:
     - changes:
@@ -54,7 +54,7 @@ build nginx:
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
-    - docker build -t "$DOCKER_IMAGE_NAME" ./nginx
+    - docker build -t --no-cache "$DOCKER_IMAGE_NAME" ./nginx
     - docker push "$DOCKER_IMAGE_NAME:$BUILD_TAG"
   rules:
     - changes:
