@@ -1,10 +1,11 @@
 import uvicorn
-from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers.auth import auth
 from src.routers.debug import debug
 from src.routers.media import media
 from src.routers.settings import settings
+from fastapi import FastAPI
+
 
 app = FastAPI()
 

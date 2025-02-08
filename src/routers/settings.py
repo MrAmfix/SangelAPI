@@ -7,13 +7,12 @@ from src.crud import UserCrud, VisibilityTypeCrud, FavouriteContactCrud
 from src.database import get_session
 from src.routers.media import upload_image
 from src.utils.enums import DefaultVisibilityType
-from src.utils.loggers import api_logs, with_api_logs
+from src.utils.loggers import api_logs
 
 settings = APIRouter(prefix='/settings')
 
 
-@settings.post('/set_visibility_type')
-@api_logs
+@api_logs(settings.post('/set_visibility_type'))
 async def set_visibility_type_handler(
         auth_data: dict = Depends(access_token_auth),
         visibility_type: DefaultVisibilityType = Body(...),
@@ -37,8 +36,7 @@ async def set_visibility_type_handler(
         )
 
 
-@settings.post('/edit_account')
-@api_logs
+@api_logs(settings.post('/edit_account'))
 async def edit_account_handler(
         auth_data: dict = Depends(access_token_auth),
         name: Optional[str] = Body(None),
@@ -70,11 +68,10 @@ async def edit_account_handler(
         )
 
 
-@with_api_logs
-@settings.delete('/del_favourite_contact')
+@api_logs(settings.delete('/del_favourite_contact'))
 async def del_favourite_contact_handler(
         auth_data: dict = Depends(access_token_auth),
-        phone: str = Body(...),
+        phone: str = Body(..., embed=True),
         session: AsyncSession = Depends(get_session)
 ):
     user_id = auth_data['user'].id
@@ -106,8 +103,7 @@ async def del_favourite_contact_handler(
         )
 
 
-@settings.post('/add_favourite_contact')
-@api_logs
+@api_logs(settings.post('/add_favourite_contact'))
 async def add_favourite_contact_handler(
         auth_data: dict = Depends(access_token_auth),
         name: str = Body(...),
@@ -151,8 +147,7 @@ async def add_favourite_contact_handler(
         )
 
 
-@settings.post('/edit_photo')
-@api_logs
+@api_logs(settings.post('/edit_photo'))
 async def edit_photo_handler(
         auth_data: dict = Depends(access_token_auth),
         photo: UploadFile = File(...),

@@ -5,11 +5,12 @@ from src.database import get_session
 from src.models import VisibilityType
 from src.settings import DEBUG_SECRET_KEY
 from src.utils.enums import DefaultVisibilityType
+from src.utils.loggers import api_logs
 
 debug = APIRouter(prefix='/debug')
 
 
-@debug.post('/db_init_vis_type', include_in_schema=False)
+@api_logs(debug.post('/db_init_vis_type', include_in_schema=False))
 async def db_init_visibility_type(
         key: str = Body(...),
         session: AsyncSession = Depends(get_session)
