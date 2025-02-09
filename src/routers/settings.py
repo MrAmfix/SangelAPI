@@ -91,7 +91,7 @@ async def del_favourite_contact_handler(
 
         request = await FavouriteContactCrud.delete(
             session=session,
-            record_id=favourite_contact.id
+            record_id=favourite_contact[0].id
         )
 
         return {'detail': 'Контакт удалён!'}
@@ -135,7 +135,7 @@ async def add_favourite_contact_handler(
             phone=phone,
             name=name,
             owner_id=user_id,
-            linked_user_id=linked_user.id if linked_user else None
+            linked_user_id=linked_user[0].id if linked_user else None
         )
 
         return {'detail': 'Контакт добавлен!'}
