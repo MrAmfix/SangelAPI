@@ -135,7 +135,7 @@ async def add_favourite_contact_handler(
             phone=phone,
             name=name,
             owner_id=user_id,
-            linked_user_id=linked_user.id if linked_user else None
+            linked_user_id=linked_user[0].id if linked_user else None
         )
 
         return {'detail': 'Контакт добавлен!'}
