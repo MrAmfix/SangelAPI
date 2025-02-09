@@ -91,7 +91,7 @@ async def del_favourite_contact_handler(
 
         request = await FavouriteContactCrud.delete(
             session=session,
-            record_id=favourite_contact.id
+            record_id=favourite_contact[0].id
         )
 
         return {'detail': 'Контакт удалён!'}
