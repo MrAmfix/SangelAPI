@@ -12,7 +12,7 @@ debug = APIRouter(prefix='/debug')
 
 @api_logs(debug.post('/db_init_vis_type', include_in_schema=False))
 async def db_init_visibility_type(
-        key: str = Body(...),
+        key: str = Body(..., embed=True),
         session: AsyncSession = Depends(get_session)
 ):
     if key != DEBUG_SECRET_KEY:
