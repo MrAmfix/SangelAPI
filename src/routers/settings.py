@@ -15,7 +15,7 @@ settings = APIRouter(prefix='/settings')
 @api_logs(settings.post('/set_visibility_type'))
 async def set_visibility_type_handler(
         auth_data: dict = Depends(access_token_auth),
-        visibility_type: DefaultVisibilityType = Body(...),
+        visibility_type: DefaultVisibilityType = Body(..., embed=True),
         session: AsyncSession = Depends(get_session)
 ):
     user_id = auth_data['user'].id
