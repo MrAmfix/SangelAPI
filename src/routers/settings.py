@@ -19,7 +19,7 @@ async def set_visibility_type_handler(
         session: AsyncSession = Depends(get_session)
 ):
     user_id = auth_data['user'].id
-    visibility_type_id = await VisibilityTypeCrud.get_by_enum(enum=visibility_type, session=session)
+    visibility_type_id = (await VisibilityTypeCrud.get_by_enum(enum=visibility_type, session=session)).id
 
     try:
         await UserCrud.update(
