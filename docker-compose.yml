@@ -12,8 +12,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /server/sangel.cert:/etc/nginx/sangel.cert:ro
-      - /server/sangel.key:/etc/nginx/sangel.key:ro
+      - /etc/letsencrypt/live/api.sangel.ru/fullchain.pem:/etc/nginx/sangel.cert:ro
+      - /etc/letsencrypt/live/api.sangel.ru/privkey.pem:/etc/nginx/sangel.key:ro
     depends_on:
       - backend_api
     networks:
