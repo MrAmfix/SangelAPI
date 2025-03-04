@@ -9,7 +9,7 @@ from src.utils.loggers import api_logs
 from src.utils.moscow_datetime import datetime_now_moscow
 
 
-events = APIRouter(prefix="/events")
+events = APIRouter(prefix="/my_devices")
 
 
 @api_logs(events.post("/new_event"))
@@ -43,10 +43,10 @@ async def create_event(
             "detail": "Событие создано"
         }
     
-    except DBAPIError:
+    except DBAPIError as _de:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Неправильный формат аргументов"
+            detail=f"Неправильный формат аргументов: {str(_de)}"
         )
     
     except Exception as e:
@@ -112,7 +112,7 @@ async def get_event(
         return {
             "code": status.HTTP_200_OK,
             "detail": "Активное событие существует",
-            "event": event
+            "event": event[0]
         }
 
     except Exception as e:
