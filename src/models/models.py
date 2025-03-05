@@ -293,6 +293,8 @@ class Event(Base, AsyncAttrs):
     start_longitude: Mapped[float] = mapped_column(Numeric(9, 6), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     complete_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    called_security_group: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    called_users: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
