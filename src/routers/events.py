@@ -46,7 +46,9 @@ async def create_event(
             session=session,
             start_latitude=start_latitude,
             start_longitude=start_longitude,
-            user_id=auth_data['user'].id
+            user_id=auth_data['user'].id,
+            called_security_group=called_security_group,
+            called_users=called_users,
         )
         
         return {
