@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy.exc import DBAPIError
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException, status
@@ -16,26 +17,38 @@ events = APIRouter(prefix="/my_devices")
 async def create_event(
     start_latitude: float,
     start_longitude: float,
+    called_security_group: Optional[bool] = False,
+    called_users: Optional[bool] = False,
     auth_data: dict = Depends(access_token_auth),
     session: AsyncSession = Depends(get_session)
 ):  
     try:
-        check_for_active_event = await EventCrud.get_filtered_by_params(
+        active_event = await EventCrud.get_filtered_by_params(
             session=session,
             user_id=auth_data['user'].id,
-            is_active=True)
+            is_active=True
+        )
         
-        if check_for_active_event:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Активное событие уже существует"
+        if active_event:
+            await EventCrud.update(
+                session=session,
+                record_id=active_event.id,
+                called_security_group=called_security_group,
+                called_users=called_users
             )
+
+            return {
+            "code": status.HTTP_200_OK,
+            "detail": "Поля вызовов у активного события обновлены"
+            }
         
         await EventCrud.create(
             session=session,
             start_latitude=start_latitude,
             start_longitude=start_longitude,
-            user_id=auth_data['user'].id
+            user_id=auth_data['user'].id,
+            called_security_group=called_security_group,
+            called_users=called_users,
         )
         
         return {
@@ -46,7 +59,7 @@ async def create_event(
     except DBAPIError as _de:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Неправильный формат аргументов: {str(_de)}"
+            detail=f"Пропущены аргументы: {str(_de)}"
         )
     
     except Exception as e:
