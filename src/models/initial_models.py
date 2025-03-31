@@ -149,3 +149,21 @@ class Observer(Base, AsyncAttrs):
                                           default=uuid.uuid4)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
+
+
+class Passports(Base, AsyncAttrs):
+
+    __tablename__ = 'passports'
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
+                                          default=uuid.uuid4)   
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    surname: Mapped[str] = mapped_column(String(255), nullable=False)
+    patronymic: Mapped[Optional[str]] = mapped_column(String(255), nullable=False)
+    passport_series: Mapped[str] = mapped_column(String(255), nullable=False)
+    passport_number: Mapped[str] = mapped_column(String(255), nullable=False)
+    passport_agency: Mapped[str] = mapped_column(String(255), nullable=False)
+    passport_code: Mapped[str] = mapped_column(String(255), nullable=False)
+    passport_address: Mapped[str] = mapped_column(String(255), nullable=False)
+
+

@@ -18,3 +18,5 @@ DEBUG_SECRET_KEY = os.environ.get("DEBUG_SECRET_KEY")
 
 UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER")
 MAX_FILE_SIZE = os.environ.get("MAX_FILE_SIZE")
+
+FERRET_KEY= os.environ.get("FERRET_KEY")

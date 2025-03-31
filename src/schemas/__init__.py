@@ -8,7 +8,8 @@ from src.schemas.system_schemas import (_UserCreate, _UserUpdate, _UserGet,
                                         _NotificationCreate, _NotificationUpdate, _NotificationGet,
                                         _VisibilityTypeCreate, _VisibilityTypeUpdate, _VisibilityTypeGet,
                                         _EventCreate, _EventUpdate, _EventGet,
-                                        _ObserverCreate, _ObserverUpdate, _ObserverGet)
+                                        _ObserverCreate, _ObserverUpdate, _ObserverGet,
+                                        _PassportCreate,_PassportUpdate,_PassportGet)
 
 
 class UserModels:
@@ -132,8 +133,19 @@ class ObserverModels:
         pass
 
 
+class PassportModels:
+    class Create(_PassportCreate):
+        pass
+
+    class Update(_PassportUpdate):
+        pass
+
+    class Get(_PassportGet):
+        pass
+
+
 __all__ = [
     "UserModels", "UserDeviceModels", "MediaModels", "VerificationCodeModels",
     "TokenModels", "DeviceProductModels", "FavouriteContactModels", "NotificationModels",
-    "VisibilityTypeModels", "EventModels", "ObserverModels"
+    "VisibilityTypeModels", "EventModels", "ObserverModels", "PassportModels"
 ]

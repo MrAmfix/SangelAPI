@@ -21,6 +21,7 @@ class _UserCrop(BaseModel):
     is_active: bool
 
     photo_id: Optional[UUID4] = None
+    passport_id: Optional[UUID4] = None
     visibility_type_id: UUID4
 
     created_at: datetime
@@ -117,3 +118,19 @@ class _ObserverCrop(BaseModel):
     event_id: UUID4
 
     created_at: datetime
+
+class _PassportCrop(BaseModel):
+
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str 
+    surname: str 
+    patronymic: Optional[str] = None 
+    passport_series: str
+    passport_number: str
+    passport_agency: str
+    passport_code: str
+    passport_address: str
+
+    created_at: datetime
+    updated_at: datetime
