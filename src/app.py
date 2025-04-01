@@ -5,7 +5,6 @@ from src.routers.debug import debug
 from src.routers.media import media
 from src.routers.settings import settings
 from src.routers.events import events
-from src.routers.passports import passport, get_passport
 from fastapi import FastAPI
 
 
@@ -33,8 +32,7 @@ app.include_router(debug)
 app.include_router(media)
 app.include_router(settings)
 app.include_router(events)
-app.include_router(passport)
-app.include_router(get_passport)
+
 
 
 if __name__ == '__main__':
