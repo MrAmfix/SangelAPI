@@ -1,13 +1,14 @@
 from typing import Optional
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException, status
+from pydantic import ValidationError
 from src.crud.PassportCrud import PassportCrud
 from src.crud.UserCrud import UserCrud
 from src.database import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.auth import access_token_auth
 from src.utils.loggers import api_logs
-from src.utils.encrypt import decrypt_data, encrypt_data
+
 
 
 passport = APIRouter(prefix="/passport")
@@ -39,14 +40,14 @@ async def add_passport_data(
         
         passport_query = await PassportCrud.create(
             session=session,
-            name=encrypt_data(name),
-            surname=encrypt_data(surname),
-            patronymic=encrypt_data(patronymic),
-            passport_series= encrypt_data(passport_series),
-            passport_number=encrypt_data(passport_number),
-            passport_agency=encrypt_data(passport_agency),
-            passport_code=encrypt_data(passport_code),
-            passport_address=encrypt_data(passport_address),
+            name=name,
+            surname=surname,
+            patronymic=patronymic,
+            passport_series= passport_series,
+            passport_number=passport_number,
+            passport_agency=passport_agency,
+            passport_code=passport_code,
+            passport_address=passport_address,
         )
         
         await UserCrud.update(
@@ -59,7 +60,9 @@ async def add_passport_data(
             "code": status.HTTP_200_OK,
             "detail": "OK"
             }
-    
+    except ValidationError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Неверный формат данных ")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail=f"Ошибка: {str(e)}")

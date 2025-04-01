@@ -247,7 +247,7 @@ class _PassportCreate(BaseModel):
     patronymic: Optional[str] = Field(None, max_length=30, pattern=r'^[А-Яа-я-]+$')
     passport_series: str = Field(max_length=4, pattern=r'^\d{4}$')
     passport_number: str = Field(max_length=6, pattern=r'^\d{6}$')
-    passport_agency: str = Field(max_length=200, pattern=r'^[А-Яа-яЁё\s]+$')
+    passport_agency: str = Field(max_length=200, pattern=r'^[А-Яа-яЁё\s\d,.-]+$')
     passport_code: str = Field(pattern=r'^\d{3}-\d{3}$')
     passport_address: str = Field(max_length=300, pattern=r'^[А-Яа-яЁё\s\d,.-]+$')
 
