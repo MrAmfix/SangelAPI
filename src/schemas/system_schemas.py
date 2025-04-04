@@ -1,11 +1,12 @@
 from datetime import datetime
 from typing import List, Optional
-from pydantic import Field, BaseModel, ConfigDict, UUID4
+from pydantic import Field, BaseModel, ConfigDict, UUID4, field_validator
+from src.utils.encrypt import decrypt_data
 from src.schemas.cropped_schemas import (_MediaCrop, _VisibilityTypeCrop,
                                          _TokenCrop, _NotificationCrop,
                                          _DeviceProductCrop, _UserDeviceCrop,
                                          _FavouriteContactCrop, _UserCrop,
-                                         _EventCrop, _ObserverCrop)
+                                         _EventCrop, _ObserverCrop, _PassportCrop)
 
 
 class _UserCreate(BaseModel):
@@ -18,6 +19,7 @@ class _UserCreate(BaseModel):
     is_active: bool = True
 
     photo_id: Optional[UUID4] = None
+    passport_id: Optional[UUID4] = None
     visibility_type_id: UUID4
 
 
@@ -35,6 +37,7 @@ class _UserGet(_UserUpdate):
     notifications: List["_NotificationCrop"]
     events: List["_EventInUser"]
     observers: List["_ObserverInUser"]
+    passports: Optional["_PassportCrop"] = None
 
     created_at: datetime
     updated_at: datetime
@@ -233,3 +236,54 @@ class _ObserverGet(_ObserverUpdate):
     event: "_EventCrop"
 
     created_at: datetime
+
+
+class _PassportCreate(BaseModel):
+
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str = Field(max_length=30, pattern=r'^[А-Яа-я-]+$')
+    surname: str = Field(max_length=30, pattern=r'^[А-Яа-я-]+$')
+    patronymic: Optional[str] = Field(None, max_length=30, pattern=r'^[А-Яа-я-]+$')
+    passport_series: str = Field(max_length=4, pattern=r'^\d{4}$')
+    passport_number: str = Field(max_length=6, pattern=r'^\d{6}$')
+    passport_agency: str = Field(max_length=200, pattern=r'^[А-Яа-яЁё\s\d,.-]+$')
+    passport_code: str = Field(pattern=r'^\d{3}-\d{3}$')
+    passport_address: str = Field(max_length=300, pattern=r'^[А-Яа-яЁё\s\d,.-]+$')
+
+
+
+class _PassportUpdate(_PassportCreate):
+    id: UUID4
+
+
+class _PassportGet(_PassportUpdate):
+
+    name: str
+    surname: str
+    patronymic: Optional[str]
+    passport_series: str
+    passport_number: str
+    passport_agency: str
+    passport_code: str
+    passport_address: str
+
+    created_at: datetime
+    updated_at: datetime
+
+
+    @field_validator(
+            'name', 
+            'surname', 
+            'patronymic', 
+            'passport_series', 
+            'passport_number', 
+            'passport_agency', 
+            'passport_code', 
+            'passport_address', 
+            mode='before'
+        )
+    def decrypt_fields(cls, value):
+        return decrypt_data(value)
+    
+    

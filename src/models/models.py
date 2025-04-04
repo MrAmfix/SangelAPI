@@ -35,6 +35,12 @@ class User(Base, AsyncAttrs):
         ForeignKey('media.id', ondelete='SET NULL'),
         nullable=True
     )
+    passport_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey('passports.id', ondelete='SET NULL'),
+        nullable=True
+    )
+
     photo: Mapped["Media"] = relationship(
         'Media',
         foreign_keys=[photo_id],
@@ -88,6 +94,13 @@ class User(Base, AsyncAttrs):
     )
     observers: Mapped[List["Observer"]] = relationship(
         'Observer',
+        back_populates='user',
+        lazy='selectin'
+    )
+
+    passport: Mapped["Passport"] = relationship(
+        'Passport',
+        foreign_keys=[passport_id],
         back_populates='user',
         lazy='selectin'
     )
@@ -361,3 +374,36 @@ class Observer(Base, AsyncAttrs):
     )
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
+
+
+class Passport(Base, AsyncAttrs):
+
+    __tablename__ = 'passports'
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
+                                          default=uuid.uuid4)
+    
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    surname: Mapped[str] = mapped_column(Text, nullable=False)
+    patronymic: Mapped[Optional[str]] = mapped_column(Text, nullable=False)
+    passport_series: Mapped[str] = mapped_column(Text, nullable=False)
+    passport_number: Mapped[str] = mapped_column(Text, nullable=False)
+    passport_agency: Mapped[str] = mapped_column(Text, nullable=False)
+    passport_code: Mapped[str] = mapped_column(Text, nullable=False)
+    passport_address: Mapped[str] = mapped_column(Text, nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow, onupdate=datetime_now_moscow)
+
+    user: Mapped["User"] = relationship(
+        'User',
+        back_populates='passport',
+        lazy='selectin'
+    )
+
+
+
+
+
+                                
+
