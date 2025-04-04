@@ -96,6 +96,16 @@ class User(Base, AsyncAttrs):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow, onupdate=datetime_now_moscow)
 
 
+class RegistrationToken(Base, AsyncAttrs):
+    __tablename__ = 'registration_tokens'
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
+                                          default=uuid.uuid4)
+    phone: Mapped[str] = mapped_column(String(15), nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
+
+
 class Media(Base, AsyncAttrs):
     __tablename__ = 'media'
 

@@ -233,3 +233,17 @@ class _ObserverGet(_ObserverUpdate):
     event: "_EventCrop"
 
     created_at: datetime
+
+
+class _RegistrationTokenCreate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    phone: str
+
+
+class _RegistrationTokenUpdate(_RegistrationTokenCreate):
+    id: UUID4
+
+
+class _RegistrationTokenGet(_RegistrationTokenUpdate):
+    created_at: datetime

@@ -117,3 +117,12 @@ class _ObserverCrop(BaseModel):
     event_id: UUID4
 
     created_at: datetime
+
+
+class _RegistrationTokenCrop(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: UUID4
+    phone: str
+
+    create_at: datetime
+

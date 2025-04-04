@@ -8,7 +8,8 @@ from src.schemas.system_schemas import (_UserCreate, _UserUpdate, _UserGet,
                                         _NotificationCreate, _NotificationUpdate, _NotificationGet,
                                         _VisibilityTypeCreate, _VisibilityTypeUpdate, _VisibilityTypeGet,
                                         _EventCreate, _EventUpdate, _EventGet,
-                                        _ObserverCreate, _ObserverUpdate, _ObserverGet)
+                                        _ObserverCreate, _ObserverUpdate, _ObserverGet, _RegistrationTokenCreate,
+                                        _RegistrationTokenUpdate, _RegistrationTokenGet)
 
 
 class UserModels:
@@ -132,8 +133,19 @@ class ObserverModels:
         pass
 
 
+class RegistrationTokenModels:
+    class Create(_RegistrationTokenCreate):
+        pass
+
+    class Update(_RegistrationTokenUpdate):
+        pass
+
+    class Get(_RegistrationTokenGet):
+        pass
+
+
 __all__ = [
     "UserModels", "UserDeviceModels", "MediaModels", "VerificationCodeModels",
     "TokenModels", "DeviceProductModels", "FavouriteContactModels", "NotificationModels",
-    "VisibilityTypeModels", "EventModels", "ObserverModels"
+    "VisibilityTypeModels", "EventModels", "ObserverModels", "RegistrationTokenModels"
 ]
