@@ -8,8 +8,9 @@ from src.schemas.system_schemas import (_UserCreate, _UserUpdate, _UserGet,
                                         _NotificationCreate, _NotificationUpdate, _NotificationGet,
                                         _VisibilityTypeCreate, _VisibilityTypeUpdate, _VisibilityTypeGet,
                                         _EventCreate, _EventUpdate, _EventGet,
-                                        _ObserverCreate, _ObserverUpdate, _ObserverGet,
-                                        _PassportCreate,_PassportUpdate,_PassportGet)
+                                        _ObserverCreate, _ObserverUpdate, _ObserverGet, _RegistrationTokenCreate,
+                                        _RegistrationTokenUpdate, _RegistrationTokenGet, _PassportCreate,
+                                        _PassportUpdate, _PassportGet)
 
 
 class UserModels:
@@ -133,6 +134,17 @@ class ObserverModels:
         pass
 
 
+class RegistrationTokenModels:
+    class Create(_RegistrationTokenCreate):
+        pass
+
+    class Update(_RegistrationTokenUpdate):
+        pass
+
+    class Get(_RegistrationTokenGet):
+        pass
+
+
 class PassportModels:
     class Create(_PassportCreate):
         pass
@@ -147,5 +159,7 @@ class PassportModels:
 __all__ = [
     "UserModels", "UserDeviceModels", "MediaModels", "VerificationCodeModels",
     "TokenModels", "DeviceProductModels", "FavouriteContactModels", "NotificationModels",
-    "VisibilityTypeModels", "EventModels", "ObserverModels", "PassportModels"
+    "VisibilityTypeModels", "EventModels", "ObserverModels", "RegistrationTokenModels",
+    "PassportModels"
 ]
+

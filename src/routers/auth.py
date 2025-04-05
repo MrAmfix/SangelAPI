@@ -1,16 +1,20 @@
+from uuid import UUID
 from typing import Optional
+from datetime import timedelta
 from fastapi import APIRouter, Depends, Body
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import HTTPException
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_429_TOO_MANY_REQUESTS
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_429_TOO_MANY_REQUESTS, HTTP_403_FORBIDDEN
 from src.auth.helpers.utils import create_access_token, create_refresh_token, get_checked_token_data
 from src.crud import UserCrud, VisibilityTypeCrud, VerificationCodeCrud, TokenCrud
+from src.crud.RegistrationToken import RegistrationTokenCrud
 from src.database import get_session
 from src.settings import VERIFICATION_CODE_EXPIRE_SECONDS
 from src.utils.enums import DefaultVisibilityType
 from src.utils.formatters import normalize_phone
 from src.utils.loggers import api_logs
+from src.utils.moscow_datetime import datetime_now_moscow
 from src.utils.sms import check_expired_code
 
 
@@ -102,14 +106,17 @@ async def check_code_handler(
             'refresh_token': refresh_token
         }
 
+    reg_token = await RegistrationTokenCrud.create(session=session, phone=phone)
     return {
         'detail': 'Код верен',
-        'is_authorized': False
+        'is_authorized': False,
+        'registration_token': reg_token.id
     }
 
 
 @api_logs(auth.post('/registration'))
 async def registration_handler(
+        registration_token: UUID = Body(...),
         name: str = Body(...),
         surname: str = Body(...),
         phone: str = Depends(normalize_phone),
@@ -117,6 +124,12 @@ async def registration_handler(
         email: Optional[str] = Body(None),
         session: AsyncSession = Depends(get_session)
 ):
+    reg_token = await RegistrationTokenCrud.get_by_id(session=session, id=registration_token)
+    if not reg_token or reg_token.created_at + timedelta(minutes=15) < datetime_now_moscow():
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN,
+            detail='Запрещено!'
+        )
     try:
         visibility_type = await VisibilityTypeCrud.get_by_enum(
             enum=DefaultVisibilityType.ALL,

@@ -119,6 +119,15 @@ class _ObserverCrop(BaseModel):
 
     created_at: datetime
 
+
+class _RegistrationTokenCrop(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: UUID4
+    phone: str
+
+    create_at: datetime
+
+
 class _PassportCrop(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
