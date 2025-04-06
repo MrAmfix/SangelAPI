@@ -10,6 +10,7 @@ from src.utils.enums import DefaultVisibilityType
 from src.utils.loggers import api_logs
 from pydantic import ValidationError
 from src.crud.PassportCrud import PassportCrud
+from src.crud.CardCrud import CardCrud
 from src.crud.UserCrud import UserCrud
 
 
@@ -243,6 +244,82 @@ async def get_passport_data_handler(
             "code": status.HTTP_200_OK,
             "detail": "OK",
             "passport": passport_data
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Ошибка: {str(e)}")
+    
+
+@api_logs(settings.post("/card"))
+async def add_card_data_handler(
+    card_number: str,
+    card_validity_period: str,
+    card_cvv :str,
+    auth_data: dict = Depends(access_token_auth),
+    session: AsyncSession = Depends(get_session)
+    ):
+    try:
+
+        user_data = await UserCrud.get_by_id(
+            session=session,
+            record_id=auth_data["user"].id
+        )
+
+        if user_data.card_id:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Данные карты уже внесены")
+        
+        card_query = await CardCrud.create(
+            session=session,
+            number=card_number,
+            validity_period=card_validity_period,
+            cvv_number=card_cvv,
+        )
+        
+        await UserCrud.update(
+            session=session,
+            record_id=auth_data["user"].id,
+            card_id=card_query.id              
+        )
+
+        return {
+            "code": status.HTTP_200_OK,
+            "detail": "OK"
+            }
+    
+    except ValidationError as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Неверный формат данных : {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Ошибка: {str(e)}")
+
+
+@api_logs(settings.get("/get_card"))
+async def get_card_data_handler(
+    auth_data: dict = Depends(access_token_auth),
+    session: AsyncSession = Depends(get_session)
+    ):
+    try:
+        user_data = await UserCrud.get_by_id(
+            session=session,
+            record_id=auth_data["user"].id
+        )
+
+        if not user_data.card_id:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Данные не найдены")
+        
+        card_data = await CardCrud.get_by_id(
+            session=session,
+            record_id=user_data.card_id
+        )
+
+        return {
+            "code": status.HTTP_200_OK,
+            "detail": "OK",
+            "passport": card_data
         }
     
     except Exception as e:

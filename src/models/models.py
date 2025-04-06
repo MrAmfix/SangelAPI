@@ -40,6 +40,11 @@ class User(Base, AsyncAttrs):
         ForeignKey('passports.id', ondelete='SET NULL'),
         nullable=True
     )
+    card_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey('cards.id', ondelete='SET NULL'),
+        nullable=True
+    )
 
     photo: Mapped["Media"] = relationship(
         'Media',
@@ -101,6 +106,12 @@ class User(Base, AsyncAttrs):
     passport: Mapped["Passport"] = relationship(
         'Passport',
         foreign_keys=[passport_id],
+        back_populates='user',
+        lazy='selectin'
+    )
+    card: Mapped["Passport"] = relationship(
+        'Card',
+        foreign_keys=[card_id],
         back_populates='user',
         lazy='selectin'
     )
@@ -408,6 +419,25 @@ class Passport(Base, AsyncAttrs):
     user: Mapped["User"] = relationship(
         'User',
         back_populates='passport',
+        lazy='selectin'
+    )
+
+class Card(Base, AsyncAttrs):
+
+    __tablename__ = "cards"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
+                                          default=uuid.uuid4)
+    number: Mapped[str] = mapped_column(Text, nullable=False)
+    validity_period: Mapped[str] = mapped_column(Text, nullable=False)
+    cvv_number: Mapped[str] = mapped_column(Text, nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow, onupdate=datetime_now_moscow)
+
+    user: Mapped["User"] = relationship(
+        'User',
+        back_populates='card',
         lazy='selectin'
     )
 
