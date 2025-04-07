@@ -15,7 +15,8 @@ from src.utils.enums import DefaultVisibilityType
 from src.utils.formatters import normalize_phone
 from src.utils.loggers import api_logs
 from src.utils.moscow_datetime import datetime_now_moscow
-from src.utils.sms import check_expired_code
+from src.utils.sms import check_expired_code, generate_code, send_sms
+
 
 
 auth = APIRouter(prefix='/auth')
@@ -38,14 +39,28 @@ async def send_code_handler(
                 detail=f"Код уже был отправлен ранее, повторная отправка возможна раз в "
                        f"{VERIFICATION_CODE_EXPIRE_SECONDS} секунд"
             )
+        phone_code = generate_code()
+        cropped_phone_for_sms_api = phone[1:]
 
+        sms_response = await send_sms(
+            destination=cropped_phone_for_sms_api,
+            code=phone_code
+        )
+
+        if not sms_response.status == 200:
+            raise HTTPException(
+                status_code=sms_response.status,
+                detail="Ошибка отправки СМС"
+            )
+        
         await VerificationCodeCrud.create(
             session=session,
-            code='111111',
+            code=phone_code,
             phone=phone
         )
 
         return {'detail': 'Код отправлен'}
+    
     except IntegrityError as _ie:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
