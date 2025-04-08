@@ -308,6 +308,7 @@ class _CardCreate(BaseModel):
     number: str = Field(pattern=r'^\d{16}$',description="Номер карты должен содержать 16 цифр")
     validity_period: str = Field(pattern=r'^\d{2}/\d{2}$', description="Формат ввода срока действия: мм/гг")
     cvv_number: str = Field(pattern=r'^\d{3}$', description="CVV должен содержать 3 цифры")
+    user_id: UUID4
 
     @field_validator('validity_period')
     def check_validity_period(cls, v):
@@ -329,7 +330,7 @@ class _CardGet(BaseModel):
     number: str
     validity_period: str
     cvv_number: str
-
+    
     created_at: datetime
     updated_at: datetime
 

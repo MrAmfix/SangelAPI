@@ -22,7 +22,6 @@ class _UserCrop(BaseModel):
 
     photo_id: Optional[UUID4] = None
     passport_id: Optional[UUID4] = None
-    card_id: Optional[UUID4] = None
     visibility_type_id: UUID4
 
     created_at: datetime
@@ -125,7 +124,7 @@ class _RegistrationTokenCrop(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: UUID4
     phone: str
-
+    
     create_at: datetime
 
 
@@ -153,7 +152,8 @@ class _CardCrop(BaseModel):
     number: str
     validity_period: str
     cvv_number: str
-
+    user_id: UUID4
+    
     created_at: datetime
     updated_at: datetime
 

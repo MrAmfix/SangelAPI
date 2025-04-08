@@ -16,7 +16,7 @@ class CardCrud(
     @classmethod
     async def create(cls, session: AsyncSession, **kwargs) -> CardModels.Get:
         validated_data = CardModels.Create(**kwargs)
-        encrypted_data = {k: encrypt_data(v) for k, v in validated_data.model_dump().items()}
+        encrypted_data = {k: encrypt_data(v) if k != "user_id" else v for k, v in validated_data.model_dump().items()}
         instance = cls.base_model(**encrypted_data)
         session.add(instance)
         await session.commit()
