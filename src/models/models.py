@@ -109,7 +109,7 @@ class User(Base, AsyncAttrs):
         back_populates='user',
         lazy='selectin'
     )
-    card: Mapped["Passport"] = relationship(
+    card: Mapped["Card"] = relationship(
         'Card',
         foreign_keys=[card_id],
         back_populates='user',
@@ -435,7 +435,7 @@ class Card(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow, onupdate=datetime_now_moscow)
 
-    user: Mapped["User"] = relationship(
+    user: Mapped[List["User"]] = relationship(
         'User',
         back_populates='card',
         lazy='selectin'

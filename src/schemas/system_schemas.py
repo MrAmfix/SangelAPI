@@ -330,6 +330,8 @@ class _CardGet(BaseModel):
     validity_period: str
     cvv_number: str
 
+    user: List["_UserCrop"]
+
     created_at: datetime
     updated_at: datetime
 
