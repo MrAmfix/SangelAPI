@@ -40,6 +40,12 @@ class User(Base, AsyncAttrs):
         ForeignKey('passports.id', ondelete='SET NULL'),
         nullable=True
     )
+    card_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey('cards.id', ondelete='SET NULL'),
+        nullable=True
+    )
+
     photo: Mapped["Media"] = relationship(
         'Media',
         foreign_keys=[photo_id],
@@ -103,8 +109,9 @@ class User(Base, AsyncAttrs):
         back_populates='user',
         lazy='selectin'
     )
-    cards: Mapped["Card"] = relationship(
+    card: Mapped["Passport"] = relationship(
         'Card',
+        foreign_keys=[card_id],
         back_populates='user',
         lazy='selectin'
     )
@@ -428,15 +435,9 @@ class Card(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow, onupdate=datetime_now_moscow)
 
-    user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey('users.id'),
-        nullable=False
-    )
     user: Mapped["User"] = relationship(
         'User',
-        foreign_keys=[user_id],
-        back_populates='cards',
+        back_populates='card',
         lazy='selectin'
     )
 

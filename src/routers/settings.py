@@ -261,20 +261,28 @@ async def add_card_data_handler(
     ):
     try:
 
-        cards_data = await CardCrud.get_filtered_by_params(session=session, user_id=auth_data["user"].id)
+        user_data = await UserCrud.get_by_id(
+            session=session,
+            record_id=auth_data["user"].id
+        )
 
-        if cards_data:
+        if user_data.card_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Данные карты уже внесены")
         
-        await CardCrud.create(
+        card_query = await CardCrud.create(
             session=session,
             number=card_number,
             validity_period=card_validity_period,
             cvv_number=card_cvv,
-            user_id=auth_data["user"].id
         )
         
+        await UserCrud.update(
+            session=session,
+            record_id=auth_data["user"].id,
+            card_id=card_query.id              
+        )
+
         return {
             "code": status.HTTP_200_OK,
             "detail": "OK"
@@ -294,16 +302,24 @@ async def get_card_data_handler(
     session: AsyncSession = Depends(get_session)
     ):
     try:
+        user_data = await UserCrud.get_by_id(
+            session=session,
+            record_id=auth_data["user"].id
+        )
 
-        cards_data = await CardCrud.get_filtered_by_params(session=session, user_id=auth_data["user"].id)
-        if not cards_data:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+        if not user_data.card_id:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                     detail="Данные не найдены")
+        
+        card_data = await CardCrud.get_by_id(
+            session=session,
+            record_id=user_data.card_id
+        )
 
         return {
             "code": status.HTTP_200_OK,
             "detail": "OK",
-            "card": cards_data[0]
+            "passport": card_data
         }
     
     except Exception as e:
