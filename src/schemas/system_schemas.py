@@ -302,6 +302,7 @@ class _RegistrationTokenUpdate(_RegistrationTokenCreate):
 class _RegistrationTokenGet(_RegistrationTokenUpdate):
     created_at: datetime
 
+
 class _CardCreate(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
@@ -330,8 +331,6 @@ class _CardGet(BaseModel):
     validity_period: str
     cvv_number: str
 
-    user: List["_UserCrop"]
-
     created_at: datetime
     updated_at: datetime
 
@@ -343,5 +342,3 @@ class _CardGet(BaseModel):
         )
     def decrypt_fields(cls, value):
         return decrypt_data(value)
-
-
