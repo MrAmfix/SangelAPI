@@ -3,13 +3,14 @@ from fastapi import APIRouter, Depends, Body, HTTPException, UploadFile, File, s
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.status import HTTP_400_BAD_REQUEST
 from src.auth.auth import access_token_auth
-from src.crud import UserCrud, VisibilityTypeCrud, FavouriteContactCrud
+from src.crud import VisibilityTypeCrud, FavouriteContactCrud
 from src.database import get_session
 from src.routers.media import upload_image
 from src.utils.enums import DefaultVisibilityType
 from src.utils.loggers import api_logs
 from pydantic import ValidationError
 from src.crud.PassportCrud import PassportCrud
+from src.crud.CardCrud import CardCrud
 from src.crud.UserCrud import UserCrud
 
 
@@ -167,34 +168,31 @@ async def edit_photo_handler(
 
 @api_logs(settings.post("/passport"))
 async def add_passport_data_handler(
-    name: str,
-    surname: str,
-    patronymic: Optional[str],
-    passport_series: str,
-    passport_number: str,
-    passport_agency: str,
-    passport_code: str,
-    passport_address: str,
+    name: str = Body(...),
+    surname: str = Body(...),
+    patronymic: Optional[str] = Body(...),
+    passport_series: str = Body(...),
+    passport_number: str = Body(...),
+    passport_agency: str = Body(...),
+    passport_code: str = Body(...),
+    passport_address: str = Body(...),
     auth_data: dict = Depends(access_token_auth),
     session: AsyncSession = Depends(get_session)
-    ):
+):
     try:
 
-        user_data = await UserCrud.get_by_id(
-            session=session,
-            record_id=auth_data["user"].id
-        )
+        user_data = auth_data['user']
 
         if user_data.passport_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Паспортные данные уже внесены")
+                                detail="Паспортные данные уже внесены")
         
         passport_query = await PassportCrud.create(
             session=session,
             name=name,
             surname=surname,
             patronymic=patronymic,
-            passport_series= passport_series,
+            passport_series=passport_series,
             passport_number=passport_number,
             passport_agency=passport_agency,
             passport_code=passport_code,
@@ -208,11 +206,10 @@ async def add_passport_data_handler(
         )
 
         return {
-            "code": status.HTTP_200_OK,
             "detail": "OK"
             }
     except ValidationError:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail=f"Неверный формат данных ")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
@@ -223,16 +220,13 @@ async def add_passport_data_handler(
 async def get_passport_data_handler(
     auth_data: dict = Depends(access_token_auth),
     session: AsyncSession = Depends(get_session)
-    ):
+):
     try:
-        user_data = await UserCrud.get_by_id(
-            session=session,
-            record_id=auth_data["user"].id
-        )
+        user_data = auth_data['user']
 
         if not user_data.passport_id:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Данные не найдены")
+                                detail="Данные не найдены")
         
         passport_data = await PassportCrud.get_by_id(
             session=session,
@@ -240,9 +234,78 @@ async def get_passport_data_handler(
         )
 
         return {
-            "code": status.HTTP_200_OK,
             "detail": "OK",
             "passport": passport_data
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Ошибка: {str(e)}")
+    
+
+@api_logs(settings.post("/card"))
+async def add_card_data_handler(
+    card_number: str = Body(...),
+    card_validity_period: str = Body(...),
+    card_cvv: str = Body(...),
+    auth_data: dict = Depends(access_token_auth),
+    session: AsyncSession = Depends(get_session)
+):
+    try:
+
+        user_data = auth_data['user']
+
+        if user_data.card_id:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail="Данные карты уже внесены")
+        
+        card_query = await CardCrud.create(
+            session=session,
+            number=card_number,
+            validity_period=card_validity_period,
+            cvv_number=card_cvv,
+        )
+        
+        await UserCrud.update(
+            session=session,
+            record_id=auth_data["user"].id,
+            card_id=card_query.id              
+        )
+
+        return {
+            "detail": "OK"
+            }
+    
+    except ValidationError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Неверный формат данных : {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Ошибка: {str(e)}")
+
+
+@api_logs(settings.get("/get_card"))
+async def get_card_data_handler(
+    auth_data: dict = Depends(access_token_auth),
+    session: AsyncSession = Depends(get_session)
+):
+    try:
+        user_data = auth_data['user']
+
+        if not user_data.card_id:
+            return {
+                'detail': 'Ok',
+                'card': None
+            }
+        
+        card_data = await CardCrud.get_by_id(
+            session=session,
+            record_id=user_data.card_id
+        )
+
+        return {
+            "detail": "OK",
+            "card": card_data
         }
     
     except Exception as e:

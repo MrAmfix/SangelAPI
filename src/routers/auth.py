@@ -139,7 +139,7 @@ async def registration_handler(
         email: Optional[str] = Body(None),
         session: AsyncSession = Depends(get_session)
 ):
-    reg_token = await RegistrationTokenCrud.get_by_id(session=session, id=registration_token)
+    reg_token = await RegistrationTokenCrud.get_by_id(session=session, record_id=registration_token)
     if not reg_token or reg_token.created_at + timedelta(minutes=15) < datetime_now_moscow():
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN,

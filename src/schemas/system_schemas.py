@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import Field, BaseModel, ConfigDict, UUID4, field_validator
 from src.utils.encrypt import decrypt_data
+from utils.moscow_datetime import datetime_now_moscow
 from src.schemas.cropped_schemas import (_MediaCrop, _VisibilityTypeCrop,
                                          _TokenCrop, _NotificationCrop,
                                          _DeviceProductCrop, _UserDeviceCrop,
@@ -20,6 +21,7 @@ class _UserCreate(BaseModel):
 
     photo_id: Optional[UUID4] = None
     passport_id: Optional[UUID4] = None
+    card_id: Optional[UUID4] = None
     visibility_type_id: UUID4
 
 
@@ -299,3 +301,44 @@ class _RegistrationTokenUpdate(_RegistrationTokenCreate):
 
 class _RegistrationTokenGet(_RegistrationTokenUpdate):
     created_at: datetime
+
+
+class _CardCreate(BaseModel):
+
+    model_config = ConfigDict(from_attributes=True)
+    number: str = Field(pattern=r'^\d{16}$',description="Номер карты должен содержать 16 цифр")
+    validity_period: str = Field(pattern=r'^\d{2}/\d{2}$', description="Формат ввода срока действия: мм/гг")
+    cvv_number: str = Field(pattern=r'^\d{3}$', description="CVV должен содержать 3 цифры")
+
+    @field_validator('validity_period')
+    def check_validity_period(cls, v):
+        exp_date = datetime.strptime(v, '%m/%y')
+        if exp_date < datetime.now():
+            raise ValueError('Срок действия карты истек')
+        return v
+
+
+class _CardUpdate(_CardCreate):
+    id: UUID4
+
+
+class _CardGet(BaseModel):
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID4
+    number: str
+    validity_period: str
+    cvv_number: str
+
+    created_at: datetime
+    updated_at: datetime
+
+    @field_validator(
+            "number",
+            "validity_period",
+            "cvv_number",
+            mode='before'
+        )
+    def decrypt_fields(cls, value):
+        return decrypt_data(value)
