@@ -203,6 +203,8 @@ class _EventCreate(BaseModel):
     start_latitude: float
     start_longitude: float
     is_active: bool = True
+    called_security_group: bool = False
+    called_users: bool = False
 
     user_id: UUID4
 
