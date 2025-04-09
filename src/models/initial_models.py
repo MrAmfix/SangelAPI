@@ -166,4 +166,19 @@ class Passports(Base, AsyncAttrs):
     passport_code: Mapped[str] = mapped_column(Text, nullable=False)
     passport_address: Mapped[str] = mapped_column(Text, nullable=False)
 
+class Cards(Base, AsyncAttrs):
+
+    __tablename__ = "cards"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
+                                          default=uuid.uuid4)
+    number: Mapped[str] = mapped_column(Text, nullable=False)
+    validity_period: Mapped[str] = mapped_column(Text, nullable=False)
+    cvv_number: Mapped[str] = mapped_column(Text, nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow, onupdate=datetime_now_moscow)
+
+
+
 
