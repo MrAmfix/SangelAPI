@@ -26,10 +26,11 @@ async def send_sms(destination: str, code: str):
     headers = {
         "Authorization": f"Bearer {SMS_API_VERIFICATION_TOKEN}"
     }
+    
     data = {
         "number": SMS_API_PHONE_NUMBER,
         "destination": destination,
-        "text": code,
+        "text": f"Здравствуйте, вот ваш одноразовый код для подтверждения регистрации в приложении Sangel: {code}. Ни в коем случае никому его не разглашайте.",
     }
 
     async with aiohttp.ClientSession() as session:
@@ -38,3 +39,6 @@ async def send_sms(destination: str, code: str):
                 return response
         except Exception as e:
             raise Exception(f"Произошла ошибка: {e}")
+
+    
+
