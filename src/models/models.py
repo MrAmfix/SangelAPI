@@ -325,6 +325,9 @@ class Event(Base, AsyncAttrs):
                                           default=uuid.uuid4)
     start_latitude: Mapped[float] = mapped_column(Numeric(9, 6), nullable=False)
     start_longitude: Mapped[float] = mapped_column(Numeric(9, 6), nullable=False)
+    current_latitude: Mapped[float] = mapped_column(Numeric(9, 6), nullable=True)
+    current_longitude: Mapped[float] = mapped_column(Numeric(9, 6), nullable=True)
+    # current - временное решение, потом перенести на IMDB 
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     complete_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     called_security_group: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)

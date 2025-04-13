@@ -2,6 +2,7 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers.auth import auth
 from src.routers.debug import debug
+from src.routers.maps import maps
 from src.routers.media import media
 from src.routers.settings import settings
 from src.routers.events import events
@@ -32,6 +33,7 @@ app.include_router(debug)
 app.include_router(media)
 app.include_router(settings)
 app.include_router(events)
+app.include_router(maps)
 
 
 

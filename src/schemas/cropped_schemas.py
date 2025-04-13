@@ -102,6 +102,8 @@ class _EventCrop(BaseModel):
     id: UUID4
     start_latitude: float
     start_longitude: float
+    current_latitude: Optional[float] = None
+    current_longitude: Optional[float] = None
     is_active: bool
     complete_date: Optional[datetime] = None
 

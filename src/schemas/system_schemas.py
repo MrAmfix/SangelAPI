@@ -202,6 +202,8 @@ class _EventCreate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     start_latitude: float
     start_longitude: float
+    current_latitude: Optional[float] = None
+    current_longitude: Optional[float] = None
     is_active: bool = True
     called_security_group: bool = False
     called_users: bool = False
