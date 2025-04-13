@@ -146,6 +146,26 @@ async def registration_handler(
             detail='Запрещено!'
         )
     try:
+        user_by_phone = await UserCrud.get_filtered_by_params(
+            session=session,
+            phone=phone
+        )
+        user_by_email = await UserCrud.get_filtered_by_params(
+            session=session,
+            email=email
+        )
+
+        if user_by_phone:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail='Пользователь с таким телефоном уже существует'
+            )
+        if user_by_email:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail='Пользователь с такой почтой уже существует'
+            )
+
         visibility_type = await VisibilityTypeCrud.get_by_enum(
             enum=DefaultVisibilityType.ALL,
             session=session
@@ -176,7 +196,7 @@ async def registration_handler(
     except IntegrityError as _ie:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
-            detail=f'Пользователь с номером {phone} уже зарегистрирован.'
+            detail=f'Данные введены в неправильном формате, {_ie}'
         )
     except Exception as _e:
         raise HTTPException(
