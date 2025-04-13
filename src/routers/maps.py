@@ -1,4 +1,6 @@
 import uuid
+
+from charset_normalizer.utils import is_accentuated
 from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.status import HTTP_400_BAD_REQUEST
@@ -55,6 +57,17 @@ async def observe_help(
     session: AsyncSession = Depends(get_session)
 ):
     try:
+        active_user_events = await EventCrud.get_filtered_by_params(
+            session=session,
+            user_id=auth_data['user'].id,
+            is_active=True
+        )
+        if active_user_events:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail='У вас есть активное событие, доступ к этой функции ограничен'
+            )
+
         active_events = await EventCrud.get_filtered_by_params(
             session=session,
             is_active=True
@@ -111,6 +124,17 @@ async def join_event(
     session: AsyncSession = Depends(get_session)
 ):
     try:
+        active_user_events = await EventCrud.get_filtered_by_params(
+            session=session,
+            user_id=auth_data['user'].id,
+            is_active=True
+        )
+        if active_user_events:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail='У вас есть активное событие, доступ к этой функции ограничен'
+            )
+
         event = await EventCrud.get_filtered_by_params(
             session=session,
             id=event_id,
@@ -175,7 +199,7 @@ async def leave_event(
                 detail='Вы не являетесь наблюдателем этого события'
             )
 
-        await ObserverCrud.delete(session=session, record_id=observer.id)
+        await ObserverCrud.delete(session=session, record_id=observer[0].id)
         return {'detail': 'Ok'}
     except Exception as _e:
         raise HTTPException(
