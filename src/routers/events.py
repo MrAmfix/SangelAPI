@@ -1,6 +1,6 @@
 from typing import Optional
 from sqlalchemy.exc import DBAPIError
-from fastapi import APIRouter
+from fastapi import APIRouter, Body
 from fastapi import Depends, HTTPException, status
 from src.crud.EventCrud import EventCrud
 from src.database import get_session
@@ -15,10 +15,10 @@ events = APIRouter(prefix="/my_devices")
 
 @api_logs(events.post("/new_event"))
 async def create_event(
-    start_latitude: float,
-    start_longitude: float,
-    called_security_group: Optional[bool] = False,
-    called_users: Optional[bool] = False,
+    start_latitude: float = Body(...),
+    start_longitude: float = Body(...),
+    called_security_group: Optional[bool] = Body(False),
+    called_users: Optional[bool] = Body(False),
     auth_data: dict = Depends(access_token_auth),
     session: AsyncSession = Depends(get_session)
 ):  
