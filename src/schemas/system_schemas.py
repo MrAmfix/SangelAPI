@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import Field, BaseModel, ConfigDict, UUID4, field_validator
 from src.utils.encrypt import decrypt_data
-from utils.moscow_datetime import datetime_now_moscow
 from src.schemas.cropped_schemas import (_MediaCrop, _VisibilityTypeCrop,
                                          _TokenCrop, _NotificationCrop,
                                          _DeviceProductCrop, _UserDeviceCrop,
