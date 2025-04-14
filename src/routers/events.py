@@ -32,7 +32,7 @@ async def create_event(
         if active_event:
             await EventCrud.update(
                 session=session,
-                record_id=active_event.id,
+                record_id=active_event[0].id,
                 called_security_group=called_security_group,
                 called_users=called_users
             )
