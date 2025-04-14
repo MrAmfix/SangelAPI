@@ -6,6 +6,7 @@ from src.routers.maps import maps
 from src.routers.media import media
 from src.routers.settings import settings
 from src.routers.events import events
+from src.routers.users import users
 from fastapi import FastAPI
 
 
@@ -34,6 +35,7 @@ app.include_router(media)
 app.include_router(settings)
 app.include_router(events)
 app.include_router(maps)
+app.include_router(users)
 
 
 
