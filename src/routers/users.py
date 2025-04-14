@@ -10,7 +10,7 @@ from src.auth.auth import access_token_auth
 from src.utils.loggers import api_logs
 
 
-users = APIRouter(prefix="/users")
+users = APIRouter(prefix="/user")
 
 
 @api_logs(users.get("/get_info"))
@@ -36,7 +36,7 @@ async def get_user_info(
         return {
             "user":cropped_user_response.model_dump(),
             "is_active_event": True if active_event_response else False,
-            "active_observer_events": active_observer_events_response if active_observer_events_response else None,
+            "active_observer_events": active_observer_events_response,
             }
 
     except Exception as _e:

@@ -24,7 +24,8 @@ class ObserverCrud(
         ) -> Optional[List[Observer]]:
 
         result = await session.execute(
-            select(Observer.event_id).join(Observer.event)
+            select(Observer.event_id)
+            .join(Event, Event.id == Observer.event_id)
             .where(Observer.user_id == user_id)
             .filter(Event.is_active == True)
         )

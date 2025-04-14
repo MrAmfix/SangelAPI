@@ -170,7 +170,7 @@ async def edit_photo_handler(
 async def add_passport_data_handler(
     name: str = Body(...),
     surname: str = Body(...),
-    patronymic: Optional[str] = Body(...),
+    patronymic: Optional[str] = Body(None),
     passport_series: str = Body(...),
     passport_number: str = Body(...),
     passport_agency: str = Body(...),
