@@ -7,6 +7,7 @@ from src.crud import VisibilityTypeCrud, FavouriteContactCrud
 from src.database import get_session
 from src.routers.media import upload_image
 from src.utils.enums import DefaultVisibilityType
+from src.utils.formatters import normalize_phone
 from src.utils.loggers import api_logs
 from pydantic import ValidationError
 from src.crud.PassportCrud import PassportCrud
@@ -77,10 +78,11 @@ async def edit_account_handler(
 @api_logs(settings.delete('/del_favourite_contact'))
 async def del_favourite_contact_handler(
         auth_data: dict = Depends(access_token_auth),
-        phone: str = Body(..., embed=True),
+        phone: str = Depends(normalize_phone),
         session: AsyncSession = Depends(get_session)
 ):
     user_id = auth_data['user'].id
+    phone = phone
 
     try:
         favourite_contact = await FavouriteContactCrud.get_filtered_by_params(
@@ -113,7 +115,7 @@ async def del_favourite_contact_handler(
 async def add_favourite_contact_handler(
         auth_data: dict = Depends(access_token_auth),
         name: str = Body(...),
-        phone: str = Body(...),
+        phone: str = Depends(normalize_phone),
         session: AsyncSession = Depends(get_session)
 ):
     user_id = auth_data['user'].id

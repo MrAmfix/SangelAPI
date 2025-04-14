@@ -21,14 +21,14 @@ async def create_event(
     called_users: Optional[bool] = Body(False),
     auth_data: dict = Depends(access_token_auth),
     session: AsyncSession = Depends(get_session)
-):  
+):
     try:
         active_event = await EventCrud.get_filtered_by_params(
             session=session,
             user_id=auth_data['user'].id,
             is_active=True
         )
-        
+
         if active_event:
             await EventCrud.update(
                 session=session,
@@ -41,7 +41,7 @@ async def create_event(
             "code": status.HTTP_200_OK,
             "detail": "Поля вызовов у активного события обновлены"
             }
-        
+
         await EventCrud.create(
             session=session,
             start_latitude=start_latitude,
@@ -52,18 +52,18 @@ async def create_event(
             called_security_group=called_security_group,
             called_users=called_users,
         )
-        
+
         return {
             "code": status.HTTP_200_OK,
             "detail": "Событие создано"
         }
-    
+
     except DBAPIError as _de:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Пропущены аргументы: {str(_de)}"
         )
-    
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -81,7 +81,7 @@ async def delete_event(
             session=session,
             user_id=auth_data['user'].id,
             is_active=True)
-        
+
         if not active_event:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -93,10 +93,10 @@ async def delete_event(
             record_id=active_event[0].id,
             complete_date=datetime_now_moscow(),
             is_active=False)
-        
+
         return {
             "code": status.HTTP_200_OK,
-            "detail":'Событие удалено'
+            "detail": 'Событие удалено'
         }
 
     except Exception as e:
@@ -122,7 +122,7 @@ async def get_event(
             raise HTTPException(
                 status_code=status.HTTP_200_OK,
                 detail=f"Активных событий нет"
-        )
+            )
 
         return {
             "code": status.HTTP_200_OK,
@@ -134,6 +134,6 @@ async def get_event(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Ошибка: {str(e)}"
-        ) 
+        )
 
 
