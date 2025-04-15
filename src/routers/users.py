@@ -1,6 +1,5 @@
 from fastapi import Depends,HTTPException, status
 from fastapi import APIRouter
-from src.crud.UserCrud import UserCrud
 from src.crud.EventCrud import EventCrud
 from src.schemas.cropped_schemas import _UserCrop
 from src.crud.ObserverCrud import ObserverCrud
