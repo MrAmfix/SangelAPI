@@ -1,6 +1,4 @@
 import uuid
-
-from charset_normalizer.utils import is_accentuated
 from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.status import HTTP_400_BAD_REQUEST
@@ -49,7 +47,7 @@ async def send_location(
         )
 
 
-@api_logs(maps.get('/observe_help'))
+@api_logs(maps.post('/observe_help'))
 async def observe_help(
     auth_data: dict = Depends(access_token_auth),
     latitude: float = Body(...),
@@ -87,7 +85,7 @@ async def observe_help(
         )
 
 
-@api_logs(maps.get('/get_event_status'))
+@api_logs(maps.post('/get_event_status'))
 async def get_event_status(
     auth_data: dict = Depends(access_token_auth),
     event_id: uuid.UUID = Body(..., embed=True),
