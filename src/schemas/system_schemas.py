@@ -6,7 +6,8 @@ from src.schemas.cropped_schemas import (_MediaCrop, _VisibilityTypeCrop,
                                          _TokenCrop, _NotificationCrop,
                                          _DeviceProductCrop, _UserDeviceCrop,
                                          _FavouriteContactCrop, _UserCrop,
-                                         _EventCrop, _ObserverCrop, _PassportCrop)
+                                         _EventCrop, _ObserverCrop, _PassportCrop, _EmployeeCrop, _SecurityGroupCrop,
+                                         _EmployeeRoleCrop, _OrganizationCrop)
 
 
 class _UserCreate(BaseModel):
@@ -203,11 +204,14 @@ class _EventCreate(BaseModel):
     start_longitude: float
     current_latitude: Optional[float] = None
     current_longitude: Optional[float] = None
-    is_active: bool = True
-    called_security_group: bool = False
-    called_users: bool = False
-
+    current_latitude_sg: Optional[float] = None
+    current_longitude_sg: Optional[float] = None
+    is_active: bool
+    is_archived: bool
+    organization_comment: Optional[str] = None
+    complete_date: Optional[datetime] = None
     user_id: UUID4
+    security_group_id: Optional[UUID4] = None
 
 
 class _EventUpdate(_EventCreate):
@@ -345,3 +349,84 @@ class _CardGet(BaseModel):
         )
     def decrypt_fields(cls, value):
         return decrypt_data(value)
+
+
+class _OrganizationCreate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str
+    email: str
+    code_id: str
+    legal_address: str
+    is_active: bool = False
+    logo: Optional[str] = None
+    license_scan: str
+    owner_id: UUID4
+
+
+class _OrganizationUpdate(_OrganizationCreate):
+    id: UUID4
+
+
+class _OrganizationGet(_OrganizationUpdate):
+    created_at: datetime
+    owner: _EmployeeCrop
+    employees: List[_EmployeeCrop]
+    security_groups: List[_SecurityGroupCrop]
+
+
+class _SecurityGroupCreate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    name_id: str
+    description: Optional[str]
+    organization_id: UUID4
+
+
+class _SecurityGroupUpdate(_SecurityGroupCreate):
+    id: UUID4
+
+
+class _SecurityGroupGet(_SecurityGroupUpdate):
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class _EmployeeRoleCreate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    name: str
+
+
+class _EmployeeRoleUpdate(_EmployeeRoleCreate):
+    id: UUID4
+
+
+class _EmployeeRoleGet(_EmployeeRoleUpdate):
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class _EmployeeCreate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    fullname: str = Field(...)
+    phone: str = Field(...)
+    photo: Optional[str]
+    is_active: bool = False
+    employee_role_id: UUID4
+    security_group_id: Optional[UUID4] = None
+    works_in_organization_id: UUID4
+
+
+class _EmployeeUpdate(_EmployeeCreate):
+    id: UUID4
+
+
+class _EmployeeGet(_EmployeeUpdate):
+    created_at: datetime
+    employee_role: _EmployeeRoleCrop
+    security_group: Optional[_SecurityGroupCrop]
+    works_in_organization: "_OrganizationCrop"
+    organizations_own: List["_OrganizationCrop"]

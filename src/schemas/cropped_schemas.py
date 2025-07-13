@@ -104,12 +104,14 @@ class _EventCrop(BaseModel):
     start_longitude: float
     current_latitude: Optional[float] = None
     current_longitude: Optional[float] = None
+    current_latitude_sg: Optional[float] = None
+    current_longitude_sg: Optional[float] = None
     is_active: bool
+    is_archived: bool
+    organization_comment: Optional[str] = None
     complete_date: Optional[datetime] = None
-
     user_id: UUID4
-    # security_group_id: Optional[UUID4] = None
-
+    security_group_id: Optional[UUID4] = None
     created_at: datetime
 
 
@@ -159,3 +161,48 @@ class _CardCrop(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+
+class _OrganizationCrop(BaseModel):
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID4
+    name: str
+    email: str
+    code_id: str
+    legal_address: str
+    is_active: bool = False
+    logo: Optional[str] = None
+    license_scan: str
+    owner_id: UUID4
+    created_at: datetime
+
+
+class _SecurityGroupCrop(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: UUID4
+    name_id: str
+    description: Optional[str]
+    organization_id: UUID4
+    created_at: datetime
+
+
+class _EmployeeRoleCrop(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: UUID4
+    name: str
+    created_at: datetime
+
+
+class _EmployeeCrop(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID4
+    fullname: str
+    phone: str
+    photo: Optional[str] = None
+    is_active: bool = False
+    employee_role_id: UUID4
+    security_group_id: Optional[UUID4] = None
+    works_in_organization_id: UUID4
+    created_at: datetime

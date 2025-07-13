@@ -18,7 +18,6 @@ from src.utils.moscow_datetime import datetime_now_moscow
 from src.utils.sms import check_expired_code, generate_code, send_sms
 
 
-
 auth = APIRouter(prefix='/auth')
 
 

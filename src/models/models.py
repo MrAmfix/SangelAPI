@@ -14,7 +14,7 @@ class Base(AsyncAttrs, DeclarativeBase):
     __mapper_args__ = {'eager_defaults': True}
 
 
-class User(Base, AsyncAttrs):
+class User(Base):
     __tablename__ = 'users'
     __table_args__ = (
         CheckConstraint("name ~ '^[А-Яа-я-]+$'", name="check_users_name_cyrillic"),
@@ -123,7 +123,7 @@ class User(Base, AsyncAttrs):
                                                  onupdate=datetime_now_moscow)
 
 
-class RegistrationToken(Base, AsyncAttrs):
+class RegistrationToken(Base):
     __tablename__ = 'registration_tokens'
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
@@ -133,7 +133,7 @@ class RegistrationToken(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
-class Media(Base, AsyncAttrs):
+class Media(Base):
     # TODO: Пересмотреть надобность этой таблицы
     __tablename__ = 'media'
 
@@ -153,7 +153,7 @@ class Media(Base, AsyncAttrs):
                                                  onupdate=datetime_now_moscow)
 
 
-class VerificationCode(Base, AsyncAttrs):
+class VerificationCode(Base):
     __tablename__ = 'verification_codes'
     __table_args__ = (
         CheckConstraint("code ~ '^\\d{6}$'", name="check_verif_code_format"),
@@ -170,7 +170,7 @@ class VerificationCode(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
-class Token(Base, AsyncAttrs):
+class Token(Base):
     __tablename__ = 'tokens'
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
@@ -192,7 +192,7 @@ class Token(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
-class DeviceProduct(Base, AsyncAttrs):
+class DeviceProduct(Base):
     __tablename__ = 'device_products'
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
@@ -209,7 +209,7 @@ class DeviceProduct(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
-class UserDevice(Base, AsyncAttrs):
+class UserDevice(Base):
     __tablename__ = 'user_devices'
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
@@ -242,7 +242,7 @@ class UserDevice(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
-class FavouriteContact(Base, AsyncAttrs):
+class FavouriteContact(Base):
     __tablename__ = 'favourite_contacts'
     __table_args__ = (
         UniqueConstraint("owner_id", "phone", name="unique_favourite_contact"),
@@ -283,7 +283,7 @@ class FavouriteContact(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
-class Notification(Base, AsyncAttrs):
+class Notification(Base):
     __tablename__ = 'notifications'
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
@@ -306,7 +306,7 @@ class Notification(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
-class VisibilityType(Base, AsyncAttrs):
+class VisibilityType(Base):
     __tablename__ = 'visibility_types'
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
@@ -320,7 +320,7 @@ class VisibilityType(Base, AsyncAttrs):
     )
 
 
-class Event(Base, AsyncAttrs):
+class Event(Base):
     __tablename__ = 'events'
     __table_args__ = (
         CheckConstraint("-90 <= start_latitude AND start_latitude <= 90", name="check_latitude_range"),
@@ -376,7 +376,7 @@ class Event(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
-class Observer(Base, AsyncAttrs):
+class Observer(Base):
     __tablename__ = 'observers'
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
@@ -409,7 +409,7 @@ class Observer(Base, AsyncAttrs):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)
 
 
-class Passport(Base, AsyncAttrs):
+class Passport(Base):
     __tablename__ = 'passports'
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
@@ -435,7 +435,7 @@ class Passport(Base, AsyncAttrs):
     )
 
 
-class Card(Base, AsyncAttrs):
+class Card(Base):
     __tablename__ = "cards"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
@@ -461,7 +461,7 @@ class Organization(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
                                           default=uuid.uuid4)
     name: Mapped[str] = mapped_column(Text, nullable=False)
-    email: Mapped[str] = mapped_column(Text, nullable=False, unqiue=True, index=True)
+    email: Mapped[str] = mapped_column(Text, nullable=False, unique=True, index=True)
     code_id: Mapped[str] = mapped_column(String(7), nullable=False)
     legal_address: Mapped[str] = mapped_column(Text, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
@@ -496,7 +496,11 @@ class Employee(Base):
 
     security_group_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey('security_groups.id'),
                                                          nullable=True)
-    security_group: Mapped["SecurityGroup"] = relationship("SecurityGroup", back_populates='employees', lazy='selectin')
+    security_group: Mapped["SecurityGroup"] = relationship(
+        'SecurityGroup',
+        back_populates='employees',
+        lazy='selectin'
+    )
 
     works_in_organization_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True),
                                                                 ForeignKey('organizations.id'), nullable=False)
@@ -512,7 +516,7 @@ class Employee(Base):
 class EmployeeRole(Base):
     __tablename__ = "employee_roles"
 
-    # AdminOrg, StaffOrg, Captain ...
+    # AdminOrg, StaffOrg, Captain, SGEmployee, ...
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,
                                           default=uuid.uuid4)
     name: Mapped[str] = mapped_column(Text, nullable=False, unique=True, index=True)
@@ -536,6 +540,6 @@ class SecurityGroup(Base):
     organization: Mapped["Organization"] = relationship("Organization",
                                                         back_populates='security_groups', lazy='selectin')
 
-    employees: List[Mapped["Employee"]] = relationship("Employee", back_populates='secutiry_group', lazy='selectin')
+    employees: List[Mapped["Employee"]] = relationship("Employee", back_populates='security_group', lazy='selectin')
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime_now_moscow)

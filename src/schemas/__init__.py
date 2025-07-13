@@ -11,7 +11,10 @@ from src.schemas.system_schemas import (_UserCreate, _UserUpdate, _UserGet,
                                         _ObserverCreate, _ObserverUpdate, _ObserverGet, _RegistrationTokenCreate,
                                         _RegistrationTokenUpdate, _RegistrationTokenGet, _PassportCreate,
                                         _PassportUpdate, _PassportGet,
-                                        _CardCreate, _CardUpdate, _CardGet)
+                                        _CardCreate, _CardUpdate, _CardGet, _OrganizationCreate, _OrganizationUpdate,
+                                        _OrganizationGet, _EmployeeCreate, _EmployeeUpdate, _EmployeeGet,
+                                        _EmployeeRoleCreate, _EmployeeRoleUpdate, _EmployeeRoleGet,
+                                        _SecurityGroupCreate, _SecurityGroupUpdate, _SecurityGroupGet)
 
 
 class UserModels:
@@ -168,10 +171,55 @@ class CardModels:
         pass
 
 
+class OrganizationModels:
+    class Create(_OrganizationCreate):
+        pass
+
+    class Update(_OrganizationUpdate):
+        pass
+
+    class Get(_OrganizationGet):
+        pass
+
+
+class EmployeeModels:
+    class Create(_EmployeeCreate):
+        pass
+
+    class Update(_EmployeeUpdate):
+        pass
+
+    class Get(_EmployeeGet):
+        pass
+
+
+class EmployeeRoleModels:
+    class Create(_EmployeeRoleCreate):
+        pass
+
+    class Update(_EmployeeRoleUpdate):
+        pass
+
+    class Get(_EmployeeRoleGet):
+        pass
+
+
+class SecurityGroupModels:
+    class Create(_SecurityGroupCreate):
+        pass
+
+    class Update(_SecurityGroupUpdate):
+        pass
+
+    class Get(_SecurityGroupGet):
+        pass
+
+
 __all__ = [
     "UserModels", "UserDeviceModels", "MediaModels", "VerificationCodeModels",
     "TokenModels", "DeviceProductModels", "FavouriteContactModels", "NotificationModels",
     "VisibilityTypeModels", "EventModels", "ObserverModels", "RegistrationTokenModels",
-    "PassportModels", "CardModels"
+    "PassportModels", "CardModels", "OrganizationModels", "EmployeeModels", "EmployeeRoleModels",
+    "SecurityGroupModels"
 ]
 

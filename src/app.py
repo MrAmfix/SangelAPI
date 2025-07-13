@@ -1,12 +1,13 @@
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
-from src.routers.auth import auth
-from src.routers.debug import debug
-from src.routers.maps import maps
-from src.routers.media import media
-from src.routers.settings import settings
-from src.routers.events import events
-from src.routers.users import users
+from src.routers.pso.auth_pso import pso
+from src.routers.users.auth import auth
+from src.routers.users.debug import debug
+from src.routers.users.maps import maps
+from src.routers.users.media import media
+from src.routers.users.settings import settings
+from src.routers.users.events import events
+from src.routers.users.users import users
 from fastapi import FastAPI
 
 
@@ -36,6 +37,8 @@ app.include_router(settings)
 app.include_router(events)
 app.include_router(maps)
 app.include_router(users)
+
+app.include_router(pso)
 
 
 

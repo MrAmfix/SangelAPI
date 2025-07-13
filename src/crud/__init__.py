@@ -8,3 +8,8 @@ from .TokenCrud import TokenCrud
 from .UserCrud import UserCrud
 from .VerificationCodeCrud import VerificationCodeCrud
 from .VisibilityTypeCrud import VisibilityTypeCrud
+from .RegistrationToken import RegistrationTokenCrud
+from .OrganizationCrud import OrganizationCrud
+from .EmployeeCrud import EmployeeCrud
+from .EmployeeRoleCrud import EmployeeRoleCrud
+from .SecurityGroupCrud import SecurityGroupCrud

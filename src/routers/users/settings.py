@@ -5,7 +5,7 @@ from starlette.status import HTTP_400_BAD_REQUEST
 from src.auth.auth import access_token_auth
 from src.crud import VisibilityTypeCrud, FavouriteContactCrud
 from src.database import get_session
-from src.routers.media import upload_image
+from src.routers.users.media import upload_image
 from src.utils.enums import DefaultVisibilityType
 from src.utils.formatters import normalize_phone
 from src.utils.loggers import api_logs
